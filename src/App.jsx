@@ -11,10 +11,12 @@ import LoanRequest from "./pages/LoanRequest";
 import Invoice from "./pages/Invoice";
 import CRUD from "./pages/CRUD";
 import UpdateProduct from "./pages/UpdateProduct";
+import CreateQr from "./pages/CreateQr";
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/CreateQr" element={<CreateQr />} />
       <Route path="/order" element={<ManualOrder />} />
       <Route path="/invoice" element={<Invoice />} />
       <Route path="/login" element={<Login />} />
