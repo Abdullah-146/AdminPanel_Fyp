@@ -28,7 +28,8 @@ const toolbarContainerStyle = {
   border: "1px solid #ddd",
   borderRadius: "4px",
   marginBottom: "10px",
-  // height: "400px",
+  minHeight: "400px",
+  zIndex: "1",
 };
 
 const contentContainerStyle = {
