@@ -109,8 +109,8 @@ const QRGenerator = () => {
             Create Table
           </button>
         </div>
-        {/* 
-        <div>
+
+        {/* <div>
           <QRCode value={qrData} />
         </div> */}
         <div style={{ marginTop: 20 }}>
