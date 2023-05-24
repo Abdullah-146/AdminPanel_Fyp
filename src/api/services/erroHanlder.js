@@ -1,4 +1,5 @@
 import {  toast } from 'react-toastify';
+
 export const errorHandler = (error) => {
       let status = error.response.status;
       let err = null;
@@ -13,6 +14,7 @@ export const errorHandler = (error) => {
           err = error.response.data.error.message;
         }
       }
-      toast.error(err)
+      
+    toast.error(err);
     return err;
 }

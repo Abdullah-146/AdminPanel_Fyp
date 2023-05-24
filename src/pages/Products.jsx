@@ -1,22 +1,49 @@
 import React, { useState } from "react";
 import Layout from "../Layout/Layout.jsx";
 import style from "../assets/css/users.module.css";
-import data from "../utils/Userdata.js";
-import Table from "../component/Table.jsx";
-import { getUsers } from "../api/services/user.service.js";
+import { deleteProduct, getProducts } from "../api/services/product.service.js";
+import Table3 from "../component/Table3.jsx";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-function Users() {
+function Products() {
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const callApi = async () => {
-      const response = await getUsers({filter:search?{title:{$regex:search,options:'i'}}:{}});
+      const response = await getProducts({filter:search?{title:{$regex:search,options:'i'}}:{}});
       console.log(response.data);
-      setUsers(response.data);
+      setProducts(response.data);
     };
     callApi();
   }, [search]);
+
+  
+  const viewProduct = (id) => {
+     navigate(`/product/${id}`);
+  }
+  const editProduct = (id) => {
+     navigate(`/product/${id}`);
+  }
+  const deleteProductF = async(id) => {
+    try{
+        const response = await deleteProduct(id);
+        if(response.status === "OK"){
+            toast.success(response.data.msg);
+            setProducts(products.filter((product)=>product._id!==id));
+        }
+    }catch(err){
+        console.log(err);
+    }
+    
+  }
+
+  const handleCreateProduct = () => {
+    navigate("/create-product");
+  }
+
 
   return (
     <Layout>
@@ -36,7 +63,7 @@ function Users() {
             fontWeight: "normal",
           }}
         >
-          Users
+          Products
         </p>
         <div
           style={{
@@ -51,12 +78,12 @@ function Users() {
             type="search"
             id="input"
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search Users"
+            placeholder="Search Products"
           ></input>
-          <button className={style.button}>Create User</button>
+          <button onClick={handleCreateProduct} className={style.button}>Create Product</button>
         </div>
       </div>
-      <Table data={users} />
+      <Table3 data={products} view={viewProduct} edit={editProduct} delete={deleteProductF} />
       {/* <table>
         <thead>
           <tr>
@@ -89,4 +116,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default Products;

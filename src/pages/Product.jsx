@@ -1,30 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../Layout/Layout";
 import style from "../assets/css/product.module.css";
 import burger from "../assets/burger.png";
 import { Link } from "react-router-dom";
+import { getProductById } from "../api/services/product.service";
+import { useNavigate, useParams } from "react-router-dom";
 function Product() {
+
+  const [product, setProduct] = useState({});
+  const navigate = useNavigate();
+  const { productId } = useParams();
+
+  React.useEffect(() => {
+
+    const callAPi = async () => {
+      try{
+        const response = await getProductById(productId);
+      console.log(response.data);
+      setProduct(response.data);
+      }catch(e){
+        console.log(e);
+      }
+
+    }
+    callAPi();
+
+  }, []);
+
+
   return (
     <Layout>
       <div className={style.container}>
         <div className={style.product_image}>
-          <img src={burger} className={style.product_pic} />
+          <img src={product.image} className={style.product_pic} />
         </div>
         <div className={style.product_details}>
           <header>
-            <h1 className={style.title}>Burger</h1>
+            <h1 className={style.title}>{product.title}</h1>
             <span className={style.colorCat}>SCMS Cafe</span>
             <div className={style.price}>
-              <span className={style.current}>Rs 1440</span>
+              <span className={style.current}>Rs {product.price}</span>
             </div>
           </header>
           <article>
             <h5 style={{ color: "black" }}>Description</h5>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+             {product.description}
             </p>
           </article>
 

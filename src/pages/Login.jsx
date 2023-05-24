@@ -1,27 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import "../assets/css/login.css";
 import { Outlet, Link } from "react-router-dom";
+import { login } from "../api/services/auth.service";
 
 function Login() {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async (e) => {
+    try {
+      e.preventDefault();
+      const response = await login({ ...data });
+      if (response.status === "OK") {
+        localStorage.setItem("accessToken", response.accessToken);
+        localStorage.setItem("refreshToken", response.refreshToken);
+        localStorage.setItem("user", response.user);
+        window.location.href = "/";
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
   return (
     <div className="login-box">
       <h2>Login</h2>
-      <form>
+      <form onSubmit={handleLogin}>
         <div className="user-box">
-          <input type="text" name required />
-          <label>Username</label>
+          <input
+            type="email"
+            value={data.email}
+            onChange={handleChange}
+            name="email"
+            required
+          />
+          <label>Email</label>
         </div>
         <div className="user-box">
-          <input type="password" name required />
+          <input
+            type="password"
+            onChange={handleChange}
+            name="password"
+            required
+          />
           <label>Password</label>
         </div>
-        <Link to={"/"}>
-          <span />
-          <span />
-          <span />
-          <span />
-          Submit
-        </Link>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );
