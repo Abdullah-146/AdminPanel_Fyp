@@ -1,0 +1,36 @@
+.container {
+}
+.heading {
+  margin: 5rem 0rem 0rem 2rem;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 32px;
+  color: #64748b;
+}
+.create_box {
+  align-items: normal !important;
+  margin: 1rem;
+  background-color: #1e293b;
+  border-radius: 20px;
+}
+.box_item {
+  /* background: #334155; */
+  padding: 1rem;
+  width: 100%;
+  border-bottom: 1px solid rgb(73, 71, 71);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.input_field {
+  background: #0f172a;
+  padding: 0.5rem;
+  width: 40%;
+}
+.btns {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

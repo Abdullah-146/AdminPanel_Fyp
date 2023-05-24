@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../Layout/Layout.jsx";
-import style from "../assets/css/users.module.css";
+import style from "../assets/css/create-product.module.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { ContentState, EditorState, convertToRaw } from "draft-js";
@@ -13,8 +13,9 @@ import { createProduct } from "../api/services/product.service.js";
 
 const editorContainerStyle = {
   width: "100%",
-  //   backgroundColor: "#333",
+  backgroundColor: "#0F172A",
   color: "#fff",
+  border: "1px solid rgb(73, 71, 71)",
   padding: "10px",
   display: "flex",
   flexDirection: "column",
@@ -22,22 +23,22 @@ const editorContainerStyle = {
 };
 
 const toolbarContainerStyle = {
-  backgroundColor: "#555",
-  border: "none",
+  backgroundColor: "#0F172A",
+
+  border: "1px solid #ddd",
   borderRadius: "4px",
   marginBottom: "10px",
-  height: "400px",
+  // height: "400px",
 };
 
 const contentContainerStyle = {
-  backgroundColor: "#222",
+  backgroundColor: "#0F172A",
   padding: "20px",
   height: "300px",
 };
 
 function CreateProduct() {
   const [image, setImage] = useState(null);
-
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -93,39 +94,40 @@ function CreateProduct() {
 
   return (
     <Layout>
-      <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+      <div className={style.container}>
+        <div>
           <div>
-            <p>Create a New Meal</p>
+            <p className={style.heading}>Create a New Meal</p>
           </div>
-          <form>
-            <div>
-              <label>Image</label>
+          <form className={style.create_box}>
+            <div className={style.box_item}>
+              <label>Title</label>
+              <input
+                className={style.input_field}
+                type="text"
+                placeholder="Enter Title"
+                value={data.title}
+                onChange={(e) => setData({ ...data, title: e.target.value })}
+              />
               <input
                 type="file"
                 placeholder="Enter Image"
                 value={data.image}
                 onChange={(e) => setImage(e.target.files[0])}
               />
-              <label>Title</label>
-              <input
-                type="text"
-                placeholder="Enter Title"
-                value={data.title}
-                onChange={(e) => setData({ ...data, title: e.target.value })}
-              />
             </div>
-            <div>
+            <div className={style.box_item}>
               <label>Tags</label>
-              <select>
+              <select className={style.input_field}>
                 <option value="Breakfast">Breakfast</option>
                 <option value="Lunch">Lunch</option>
                 <option value="Dinner">Dinner</option>
               </select>
             </div>
-            <div>
+            <div className={style.box_item}>
               <label>Price</label>
               <input
+                className={style.input_field}
                 type="number"
                 placeholder="Enter Price"
                 value={data.price}
@@ -185,15 +187,7 @@ function CreateProduct() {
                   }}
                 />
               </div> */}
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                }}
-              >
+              <div className={style.btns}>
                 <button>Cancel</button>
                 <button onClick={handleSave}>Save</button>
               </div>
