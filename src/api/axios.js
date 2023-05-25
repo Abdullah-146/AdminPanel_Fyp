@@ -10,7 +10,8 @@ const get = async (key) => {
   return localStorage.getItem(key);
 };
 
-export const baseURL = "http://localhost:5000";
+// export const baseURL = "http://localhost:5000";
+export const baseURL = "https://fypserver-production-2e83.up.railway.app";
 
 const instance = axios.create({
   baseURL: baseURL,

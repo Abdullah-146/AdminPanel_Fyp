@@ -15,6 +15,7 @@ import CreateQr from "./pages/CreateQr";
 import Products from "./pages/Products";
 import Tables from "./pages/Tables";
 import CreateProduct from "./pages/CreateProduct";
+import Notification from "./pages/Notifications";
 function App() {
   return (
     <Routes>
@@ -34,6 +35,7 @@ function App() {
       <Route path="/Products" element={<Products />} />
       <Route path="/Tables" element={<Tables />} />
       <Route path="/create-product" element={<CreateProduct />} />
+      <Route path="/Notification" element={<Notification />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );

@@ -10,6 +10,7 @@ import htmlToDraft from "html-to-draftjs";
 import parse from "html-react-parser";
 import { uploadImage } from "../api/services/upload.service.js";
 import { createProduct } from "../api/services/product.service.js";
+import { toast } from "react-toastify";
 
 const editorContainerStyle = {
   width: "100%",
@@ -40,6 +41,7 @@ const contentContainerStyle = {
 
 function CreateProduct() {
   const [image, setImage] = useState(null);
+  const [category, setCategory] = useState([]);
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -77,21 +79,37 @@ function CreateProduct() {
       formData.append("file", image);
       const imageData = await uploadImage(formData);
       setData({ ...data, image: imageData.data.url });
-      const response = await createProduct({ data, image: imageData.data.url });
+      const response = await createProduct({ ...data, image: imageData.data.url });
       if (response.status === "OK") {
         toast.success("Product Created Successfully");
         setData({
           title: "",
           description: "",
-          price: "",
-          category: [],
+          price: 0,
+          category: ["Breakfast", "Lunch", "Dinner"],
           image: "",
-        }); // Clear the form
+        });
+        setEditorState(EditorState.createEmpty());
+        //Clear the form
       }
     } catch (err) {
       console.log(err);
     }
   };
+
+  const handleCategorySelection = (e) => {
+    const value = e.target.value;
+    if (!category.includes(value)) {
+      setCategory([...category, value]);
+
+    }
+  }
+
+  const handleRemoveCategory = (item) => {
+    const newCategory = category.filter((i) => i !== item);
+    setCategory(newCategory);
+  }
+
 
   return (
     <Layout>
@@ -113,13 +131,21 @@ function CreateProduct() {
               <input
                 type="file"
                 placeholder="Enter Image"
-                value={data.image}
                 onChange={(e) => setImage(e.target.files[0])}
               />
             </div>
             <div className={style.box_item}>
-              <label>Tags</label>
-              <select className={style.input_field}>
+              <label>Tags:</label>
+              {
+                category.map((item, index) =>
+                <p style={{display:"flex",justifyContent:"center",alignItems:"center",gap:5}}>
+                  {item}
+                  <span onClick={() => handleRemoveCategory(item)} style={{cursor:"pointer"}}>X</span>
+                </p>
+                
+                )
+              }
+              <select onChange={handleCategorySelection} className={style.input_field}>
                 <option value="Breakfast">Breakfast</option>
                 <option value="Lunch">Lunch</option>
                 <option value="Dinner">Dinner</option>
