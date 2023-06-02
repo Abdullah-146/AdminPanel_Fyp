@@ -15,6 +15,15 @@ function Table(props) {
     }
 
 
+    const handleNext = () => {
+        props.handleNext();
+    }
+
+    const handlePrevious = () => {
+        props.handlePrevious();
+    }
+
+
   return (
     <table style={{ overflowY: "scroll" }}>
       <thead style={{ paddingTop: 15, paddingBottom: 15,  cursor:"pointer"  }}>
@@ -93,9 +102,9 @@ function Table(props) {
           }}
           colSpan={0}
         >
-          <p>Previous</p>
+          {props.hasPreviousPage && <p  onClick={handlePrevious}>Previous</p>}
           <p>1-1 of 7</p>
-          <p>Next</p>
+         {props.hasNextPage &&  <p onClick={handleNext}>Next</p>}
         </td>
       </tfoot>
     </table>
