@@ -11,6 +11,7 @@ import parse from "html-react-parser";
 import { uploadImage } from "../api/services/upload.service.js";
 import { createProduct } from "../api/services/product.service.js";
 import { toast } from "react-toastify";
+import { getCategories } from "../api/services/category.service.js";
 
 const editorContainerStyle = {
   width: "100%",
@@ -41,12 +42,12 @@ const contentContainerStyle = {
 
 function CreateProduct() {
   const [image, setImage] = useState(null);
-  const [category, setCategory] = useState([]);
+  const [categories, setCatgories] = useState([]);
   const [data, setData] = useState({
     title: "",
     description: "",
     price: 0,
-    category: ["Breakfast", "Lunch", "Dinner"],
+    category: [],
     image: "",
   });
 
@@ -59,18 +60,39 @@ function CreateProduct() {
   };
   const rawContentState = convertToRaw(editorState.getCurrentContent());
   const markup = draftToHtml(rawContentState, hashConfig);
+
+  //getting description from data setying editor state and also converting it to html
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
     const htmlContent = draftToHtml(
       convertToRaw(newEditorState.getCurrentContent())
     );
-    editDescription(htmlContent); // Call your function to save HTML to the database
+    editDescription(htmlContent);
   };
 
+  // storing description in data after comverting it to html
   const editDescription = (html) => {
     console.log(html);
     setData({ ...data, description: html });
   };
+
+  
+  //===================================================================================================
+  //getting categories
+  useEffect(() => {
+    const apiCall = async () => {
+      try {
+        const response = await getCategories();
+        setCatgories(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    apiCall();
+  }, []);
+
+//===================================================================================================
 
   const handleSave = async (e) => {
     try {
@@ -79,14 +101,17 @@ function CreateProduct() {
       formData.append("file", image);
       const imageData = await uploadImage(formData);
       setData({ ...data, image: imageData.data.url });
-      const response = await createProduct({ ...data, image: imageData.data.url });
+      const response = await createProduct({
+        ...data,
+        image: imageData.data.url,
+      });
       if (response.status === "OK") {
         toast.success("Product Created Successfully");
         setData({
           title: "",
           description: "",
           price: 0,
-          category: ["Breakfast", "Lunch", "Dinner"],
+          category:[],
           image: "",
         });
         setEditorState(EditorState.createEmpty());
@@ -97,19 +122,22 @@ function CreateProduct() {
     }
   };
 
+  //===================================================================================================
+
   const handleCategorySelection = (e) => {
     const value = e.target.value;
-    if (!category.includes(value)) {
-      setCategory([...category, value]);
-
+    console.log(value);
+    if (!data.category.includes(value)) {
+      setData({ ...data, category: [...data.category, value] });
     }
-  }
+  };
 
   const handleRemoveCategory = (item) => {
-    const newCategory = category.filter((i) => i !== item);
-    setCategory(newCategory);
-  }
+    const newCategory = data.category.filter((i) => i !== item);
+    setData({ ...data, category: newCategory });
+  };
 
+  //===================================================================================================
 
   return (
     <Layout>
@@ -136,19 +164,38 @@ function CreateProduct() {
             </div>
             <div className={style.box_item}>
               <label>Tags:</label>
-              {
-                category.map((item, index) =>
-                <p style={{display:"flex",justifyContent:"center",alignItems:"center",gap:5}}>
+              {data.category.map((item, index) => (
+                <p
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
                   {item}
-                  <span onClick={() => handleRemoveCategory(item)} style={{cursor:"pointer"}}>X</span>
+                  <span
+                    onClick={() => handleRemoveCategory(item)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    X
+                  </span>
                 </p>
-                
-                )
-              }
-              <select onChange={handleCategorySelection} className={style.input_field}>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
+              ))}
+              <select
+                onChange={handleCategorySelection}
+                className={style.input_field}
+              >
+                {
+                  categories.map((item, index) => 
+                  <option value={item.title}><div>
+                    <img src={item.image} alt="" width={20} height={20}/>
+                    <p>{item.title}</p>
+                    </div></option>
+                  )
+                }
+                {/* <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option> */}
               </select>
             </div>
             <div className={style.box_item}>

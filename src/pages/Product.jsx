@@ -5,6 +5,7 @@ import burger from "../assets/burger.png";
 import { Link } from "react-router-dom";
 import { getProductById } from "../api/services/product.service";
 import { useNavigate, useParams } from "react-router-dom";
+import parse from "html-react-parser";
 function Product() {
 
   const [product, setProduct] = useState({});
@@ -45,7 +46,7 @@ function Product() {
           <article>
             <h5 style={{ color: "black" }}>Description</h5>
             <p>
-             {product.description}
+             {parse(product.description)}
             </p>
           </article>
 

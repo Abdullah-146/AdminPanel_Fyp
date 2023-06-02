@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
@@ -16,7 +16,29 @@ import Products from "./pages/Products";
 import Tables from "./pages/Tables";
 import CreateProduct from "./pages/CreateProduct";
 import Notification from "./pages/Notifications";
+import { io } from 'socket.io-client';
+import Category from "./pages/Category";
+
+
+
+export const socket = io('http://localhost:5000',{
+  auth: {
+      token: localStorage.getItem("accessToken")
+  }
+});
+
 function App() {
+
+  
+useEffect(()=>{
+  socket.on('connect',()=>{
+    console.log('connected');
+  });
+  
+},[]);
+
+
+
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
@@ -33,6 +55,7 @@ function App() {
       <Route path="/changePass" element={<ChangePass />} />
       <Route path="/users" element={<Users />} />
       <Route path="/Products" element={<Products />} />
+      <Route path="/Category" element={<Category />} />
       <Route path="/Tables" element={<Tables />} />
       <Route path="/create-product" element={<CreateProduct />} />
       <Route path="/Notification" element={<Notification />} />

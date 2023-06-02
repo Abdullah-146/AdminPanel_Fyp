@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import style from "../assets/css/dashboard.module.css";
 import Layout from "../Layout/Layout";
 import Chart from "chart.js/auto";
@@ -11,21 +11,95 @@ import { saleData } from "../utils/Saledata";
 import { getOrders } from "../api/services/order.service";
 import Table2 from "../component/Table2";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { socket } from "../App";
 Chart.register(CategoryScale);
+
+
+var sound = new Audio("/sounds/notification.wav");
+
 
 function Dashboard() {
   const [search, setSearch] = useState("");
   const [orders, setOrders] = useState([]);
+  const [display, setDisplay] = useState([]);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const navigate = useNavigate();
+
+
+
+useEffect(()=>{
+  socket.on("disconnect", () => {
+    console.log("Connected: ", socket.connected); // false
+  });
+  
+  
+  socket.on("connect_error", (err) => {
+    console.log(err instanceof Error); // true
+    console.log(err.message); // not authorized
+    console.log(err.data); // { content: "Please retry later" }
+  });
+  
+  
+  socket.on("order", (data) => {
+    toast.success(
+      "An order has been placed",
+    );
+    sound.play();
+    console.log(data);
+  });
+},[socket]);
+
+
+const handlePagination = (action,limit,cursor) => {
+  try{
+
+    if(action==="next"){
+      
+    }
+    else if(action==="prev"){
+
+    }
+
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const handleSearch = async(e) => {
+  try{
+    setSearch(e.target.value);
+    setDisplay(orders.filter((order)=>order.title.toLowerCase().includes(e.target.value.toLowerCase())));
+    if(hasNextPage){
+      if(display.length<10){
+        let res = await getOrders({filter:search!==""?{}:{}  ,cursor:display[display.length-1]._id,limit:10});
+        setOrders([...orders,...res.data]);
+        setHasNextPage(res.hasNextPage);
+      }
+    }
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
+React.useEffect(()=>{
+  
+},[])
+
 
   React.useEffect(() => {
     const callApi = async () => {
-      const response = await getOrders({filter:search?{title:{$regex:search,options:'i'}}:{}});
-      console.log(response.data);
+      const response = await getOrders({filter:search!==""?{status:{$regex:search,options:'i'}}:{}});
+      setHasNextPage(response.hasNextPage);
       setOrders(response.data);
+      setDisplay(response.data);
     };
     callApi();
-  }, [search]);
+  }, []);
+
+
 
 
   const handleCreateOrder = () => {

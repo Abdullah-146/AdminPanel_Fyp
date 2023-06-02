@@ -7,6 +7,23 @@ const getAccessToken = () => {
   // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDNlNWYwNTA5MGEwY2VlMzg4NzQ5OTciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImFkbWluIjp0cnVlLCJpYXQiOjE2ODQ2ODU0NTR9.cT5rCgW_QOv88jw50gEPQBjoOAS7ABUOsJDkoJ4TvEQ";
 };
 
+
+export const getProductsList = async () => {
+  try {
+    let config = {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    };
+
+    const resp = await axios.get("/admin/products/list", config);
+    return resp.data;
+  } catch (err) {
+    let error = errorHandler(err);
+    throw error;
+  }
+}
+
 export const getProducts = async ({ cursor, limit, filter }) => {
   try {
     let config = {
@@ -84,13 +101,12 @@ export const deleteProduct = async (productId) => {
       },
     };
 
-    const resp = await axios.delete(
-      "/admin/products/product",
-      {
+    const resp = await axios.delete("/admin/products/product", {
+      config,
+      data: {
         productId,
       },
-      config
-    );
+    });
     return resp.data;
   } catch (err) {
     let error = errorHandler(err);

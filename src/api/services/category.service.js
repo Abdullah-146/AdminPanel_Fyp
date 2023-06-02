@@ -73,11 +73,11 @@ export const deleteCategory = async (categoryId) => {
     };
 
     const resp = await axios.delete(
-      "/admin/categories/category",
-      {
+      "/admin/categories/category",{
+      config,
+      data:{
         categoryId,
-      },
-      config
+      },}
     );
     return resp.data;
   } catch (err) {

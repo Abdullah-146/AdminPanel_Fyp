@@ -46,14 +46,14 @@ function SideBar() {
               </Link>
             </li> */}
 
-            <li>
+            {/* <li>
               <Link to="/crud">
                 <span className="icon">
                   <i className="fa fa-plus" />
                 </span>
                 <span className="text">CRUD</span>
               </Link>
-            </li>
+            </li> */}
 
             <li>
               <Link to="/invoice">
@@ -70,6 +70,14 @@ function SideBar() {
                   <i className="fa fa-credit-card" />
                 </span>
                 <span className="text">Products</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Category">
+                <span className="icon">
+                  <i className="fa fa-credit-card" />
+                </span>
+                <span className="text">Category</span>
               </Link>
             </li>
             <li>

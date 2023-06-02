@@ -17,13 +17,12 @@ function Table2(props) {
 
   return (
     <table style={{ overflowY: "scroll" }}>
-      <thead style={{ paddingTop: 15, paddingBottom: 15,  cursor:"pointer"  }}>
-        <td colSpan={0}>
-          <div
+      <thead style={{ paddingTop: 15, paddingBottom: 15,  cursor:"pointer", display:"flex", justifyContent:"flex-end",alignItems:"center"  }}>
+        <div
+            
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent:"flex-end",
               gap: 10,
               fontSize: 20,
             }}
@@ -31,7 +30,6 @@ function Table2(props) {
             <FiFilter />
             <AiOutlineDown fontSize={15} />
           </div>
-        </td>
       </thead>
       <tbody>
         <tr>

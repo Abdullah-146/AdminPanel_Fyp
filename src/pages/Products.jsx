@@ -13,37 +13,41 @@ function Products() {
 
   React.useEffect(() => {
     const callApi = async () => {
-      const response = await getProducts({filter:search?{title:{$regex:search,options:'i'}}:{}});
+      const response = await getProducts({
+        filter: search ? { title: { $regex: search, options: "i" } } : {},
+      });
       console.log(response.data);
       setProducts(response.data);
     };
     callApi();
   }, [search]);
 
-  
+  //=========================================================================================
   const viewProduct = (id) => {
-     navigate(`/product/${id}`);
-  }
+    navigate(`/product/${id}`);
+  };
+
   const editProduct = (id) => {
-     navigate(`/product/${id}`);
-  }
-  const deleteProductF = async(id) => {
-    try{
-        const response = await deleteProduct(id);
-        if(response.status === "OK"){
-            toast.success(response.data.msg);
-            setProducts(products.filter((product)=>product._id!==id));
-        }
-    }catch(err){
-        console.log(err);
+    navigate(`/product/${id}`);
+  };
+
+  const deleteProductF = async (id) => {
+    try {
+      const response = await deleteProduct(id);
+      if (response.status === "OK") {
+        toast.success(response.data.msg);
+        setProducts(products.filter((product) => product._id !== id));
+      }
+    } catch (err) {
+      console.log(err);
     }
-    
-  }
+  };
 
   const handleCreateProduct = () => {
     navigate("/create-product");
-  }
+  };
 
+  //===================================================================================================
 
   return (
     <Layout>
@@ -80,10 +84,17 @@ function Products() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Products"
           ></input>
-          <button onClick={handleCreateProduct} className={style.button}>Create Product</button>
+          <button onClick={handleCreateProduct} className={style.button}>
+            Create Product
+          </button>
         </div>
       </div>
-      <Table3 data={products} view={viewProduct} edit={editProduct} delete={deleteProductF} />
+      <Table3
+        data={products}
+        view={viewProduct}
+        edit={editProduct}
+        delete={deleteProductF}
+      />
       {/* <table>
         <thead>
           <tr>

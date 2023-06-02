@@ -7,6 +7,26 @@ const getAccessToken = () => {
   // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDNlNWYwNTA5MGEwY2VlMzg4NzQ5OTciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImFkbWluIjp0cnVlLCJpYXQiOjE2ODQ2ODU0NTR9.cT5rCgW_QOv88jw50gEPQBjoOAS7ABUOsJDkoJ4TvEQ"
 };
 
+
+export const createOrder = async (data) => {
+  try{
+
+    let config = {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    };
+
+    const resp = await axios.post("/admin/orders/create", data, config);
+    return resp.data;
+
+  }catch(err){
+    let error = errorHandler(err);
+    return error;
+  }
+}
+
+
 export const getOrders = async ({ cursor, limit, filter }) => {
   try {
     let config = {
