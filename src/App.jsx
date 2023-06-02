@@ -16,28 +16,22 @@ import Products from "./pages/Products";
 import Tables from "./pages/Tables";
 import CreateProduct from "./pages/CreateProduct";
 import Notification from "./pages/Notifications";
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 import Category from "./pages/Category";
+import OrderDetails from "./pages/OrderDetails";
 
-
-
-export const socket = io('http://localhost:5000',{
+export const socket = io("http://localhost:5000", {
   auth: {
-      token: localStorage.getItem("accessToken")
-  }
+    token: localStorage.getItem("accessToken"),
+  },
 });
 
 function App() {
-
-  
-useEffect(()=>{
-  socket.on('connect',()=>{
-    console.log('connected');
-  });
-  
-},[]);
-
-
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+  }, []);
 
   return (
     <Routes>
@@ -59,6 +53,7 @@ useEffect(()=>{
       <Route path="/Tables" element={<Tables />} />
       <Route path="/create-product" element={<CreateProduct />} />
       <Route path="/Notification" element={<Notification />} />
+      <Route path="/OrderDetails" element={<OrderDetails />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );
