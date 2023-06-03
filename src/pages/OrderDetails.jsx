@@ -71,9 +71,21 @@ function OrderDetails() {
                     paddingRight: 300,
                   }}
                 >
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <p>{key}</p>
-                  </div>
+                  {key === "Avatar" ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        minHeight: 100,
+                      }}
+                    >
+                      <p>{key}</p>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <p>{key}</p>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -95,6 +107,8 @@ function OrderDetails() {
                     padding: 10,
                     borderBottom: "1px solid #334155",
                     width: "200%",
+                    minHeight: key === "Avatar" ? 121 : 0,
+                    maxHeight: key === "Avatar" ? 121 : null,
                   }}
                 >
                   <div style={{ display: "flex", flexDirection: "column" }}>
