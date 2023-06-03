@@ -8,18 +8,7 @@ function OrderDetails() {
   const { id } = useParams();
 
   const [search, setSearch] = useState("");
-  const [details, setDetails] = useState({
-    Avatar: "Hello",
-    Name: "Abdullah",
-    Phone: "0514585774",
-    Address: "B-386 lalarukh colony",
-    TotalBill: "400$",
-    PaymentMethod: "Wallet",
-    OrderStatus: "Paid",
-    OrderDate: "22-5-2021",
-    Shared: "yes",
-    SharedUsers: "Suleman and Rehan",
-  }); //[{}
+  const [details, setDetails] = useState({}); //[{}
 
   //////////////////////////////////////
   useEffect(() => {
@@ -27,7 +16,7 @@ function OrderDetails() {
       try {
         const response = await getOrderById(id);
         console.log(response);
-        // setDetails(response.data);
+        setDetails(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -97,11 +86,20 @@ function OrderDetails() {
                         minHeight: 100,
                       }}
                     >
+                      {key === "products" || key === "contributors" ? null : (
+                        <p>{key}</p>
+                      )}
                       <p>{key}</p>
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                      <p>{key}</p>
+                      {key === "products" ||
+                      key === "contributors" ||
+                      key === "billingInfo" ? null : key === "userId" ? (
+                        <p>Placed By</p>
+                      ) : (
+                        <p>{key}</p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -130,7 +128,17 @@ function OrderDetails() {
                   }}
                 >
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <p>{details[key]}</p>
+                    {key === "userId" ? (
+                      <p>{details[key].name}</p>
+                    ) : key === "products" ||
+                      key === "contributors" ||
+                      key === "billingInfo" ? null : key === "shared" ? (
+                      <p>{details[key] ? "Yes" : "No"}</p>
+                    ) : key === "paid" ? (
+                      <p>{details[key] ? "Yes" : "No"}</p>
+                    ) : (
+                      <p>{details[key]}</p>
+                    )}
                   </div>
                 </div>
               );
