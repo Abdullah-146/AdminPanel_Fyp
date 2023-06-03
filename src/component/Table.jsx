@@ -55,7 +55,7 @@ function Table(props) {
               <AiOutlineDown />
             </div>
           </th>
-          <th>Phone Number</th>
+          <th>Email</th>
         </tr>
         {props.data.map((item, index) => 
             <tr key={item._id.toString()}>
@@ -72,7 +72,7 @@ function Table(props) {
               />
             </td>
             <td>{item.name}</td>
-            <td>{item.phoneNo || 'None'}</td>
+            <td>{item.email || 'None'}</td>
   
             <td>
               <div
