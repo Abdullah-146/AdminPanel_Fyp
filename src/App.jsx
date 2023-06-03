@@ -53,7 +53,7 @@ function App() {
       <Route path="/Tables" element={<Tables />} />
       <Route path="/create-product" element={<CreateProduct />} />
       <Route path="/Notification" element={<Notification />} />
-      <Route path="/OrderDetails" element={<OrderDetails />} />
+      <Route path="/OrderDetails/:id" element={<OrderDetails />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );

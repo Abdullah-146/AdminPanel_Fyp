@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../Layout/Layout";
 import style from "../assets/css/users.module.css";
+import { useParams } from "react-router-dom";
+import { getOrderById } from "../api/services/order.service";
 
 function OrderDetails() {
+  const { id } = useParams();
+
   const [search, setSearch] = useState("");
   const [details, setDetails] = useState({
     Avatar: "Hello",
@@ -16,6 +20,20 @@ function OrderDetails() {
     Shared: "yes",
     SharedUsers: "Suleman and Rehan",
   }); //[{}
+
+  //////////////////////////////////////
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await getOrderById(id);
+        console.log(response);
+        // setDetails(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDetails();
+  }, []);
   return (
     <Layout>
       <div
