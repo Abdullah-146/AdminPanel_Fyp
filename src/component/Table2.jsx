@@ -27,6 +27,8 @@ function Table2(props) {
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
+
+          width: "600%",
         }}
       >
         <div
