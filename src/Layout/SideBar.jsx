@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Outlet, Link } from "react-router-dom";
 import "./sidebar.css";
 import logo from "../assets/Vector.png";
+import { MdDiscount } from "react-icons/md";
+
 function SideBar() {
   const [resp, setResp] = useState("wrapper");
 
@@ -70,6 +72,14 @@ function SideBar() {
                   <i className="fa fa-credit-card" />
                 </span>
                 <span className="text">Products</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Discount">
+                <span className="icon">
+                  <MdDiscount />
+                </span>
+                <span className="text">Discount</span>
               </Link>
             </li>
             <li>

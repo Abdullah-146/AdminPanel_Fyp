@@ -18,6 +18,7 @@ import CreateProduct from "./pages/CreateProduct";
 import Notification from "./pages/Notifications";
 import { io } from 'socket.io-client';
 import Category from "./pages/Category";
+import Discount from "./pages/Discount";
 
 
 
@@ -55,6 +56,7 @@ useEffect(()=>{
       <Route path="/changePass" element={<ChangePass />} />
       <Route path="/users" element={<Users />} />
       <Route path="/Products" element={<Products />} />
+      <Route path="/Discount" element={<Discount />} />
       <Route path="/Category" element={<Category />} />
       <Route path="/Tables" element={<Tables />} />
       <Route path="/create-product" element={<CreateProduct />} />

@@ -10,14 +10,28 @@ import placeholderAvatar from "../assets/placeholderAvatar.jpg"
 function Table2(props) {
 
 
-    const handleClick = (action) => {
-        console.log(action);
+    const handleClick = (action,itemId) => {
+        props.handleClick(action,itemId);
     }
+
+    const handleNext = () => {
+        props.handleNext();
+    }
+
+    const handlePrevious = () => {
+        props.handlePrevious();
+    }
+
+    const handleLoadMore = () => {
+      props.handleLoadMore();
+    };
+  
 
 
   return (
     <table style={{ overflowY: "scroll" }}>
       <thead style={{ paddingTop: 15, paddingBottom: 15,  cursor:"pointer", display:"flex", justifyContent:"flex-end",alignItems:"center"  }}>
+      <p style={{ color: "red" }}>{props.loading && "Loading..."}</p>
         <div
             
             style={{
@@ -74,28 +88,32 @@ function Table2(props) {
                   fontSize: 20,
                 }}
               >
-                <AiOutlineEye onClick={()=>handleClick('view')} />
-                <FiEdit onClick={()=>handleClick('edit')} />
-                <RiDeleteBin6Line onClick={()=>handleClick('delete')}  />
+                <AiOutlineEye onClick={()=>handleClick('view',item._id)} />
+                <FiEdit onClick={()=>handleClick('edit',item._id)} />
+                <RiDeleteBin6Line onClick={()=>handleClick('delete',item._id)}  />
               </div>
             </td>
           </tr>
         
         )}
       </tbody>
-      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor:"pointer" }}>
-        <td
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-          colSpan={0}
-        >
-          <p>Previous</p>
-          <p>1-1 of 7</p>
-          <p>Next</p>
-        </td>
+      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
+        {!props.search ? (
+          <td
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+            colSpan={0}
+          >
+            {props.hasPreviousPage && <p onClick={handlePrevious}>Previous</p>}
+            <p>1-1 of 7</p>
+            {props.hasNextPage && <p onClick={handleNext}>Next</p>}
+          </td>
+        ) : props.loadMore && !props.loading ? (
+          <p onClick={handleLoadMore}>Load More</p>
+        ) : null}
       </tfoot>
     </table>
   );

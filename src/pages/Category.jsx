@@ -5,6 +5,7 @@ import {
   createCategory,
   deleteCategory,
   getCategories,
+  updateCategory,
 } from "../api/services/category.service";
 import { uploadImage } from "../api/services/upload.service";
 import { toast } from "react-toastify";
@@ -17,6 +18,7 @@ function Category() {
   const [category, setCategory] = React.useState("");
   const [image, setImage] = React.useState(null);
   const [data, setData] = React.useState([]);
+  const [selectedId, setSelectedId] = React.useState(null);
 
   useEffect(() => {
     const callApi = async () => {
@@ -61,6 +63,13 @@ function Category() {
         file = { image: fileData.data.url };
       }
       if (edit) {
+
+        res = await updateCategory({
+          categoryId: selectedId,
+          title: category,
+          ...file,
+        })
+
       } else {
         res = await createCategory({
           title: category,
@@ -71,7 +80,20 @@ function Category() {
       if (res) {
         if (res.status === "OK") {
           toast.success("Done Successfully");
-          setData([...data, res.data]);
+          if(edit){
+            setData(
+              data.map((item) => {
+                if (item._id === selectedId) {
+                  return res.data
+                };
+                return item;
+              }
+              )
+            );
+          }
+          else{
+            setData([...data, res.data]);
+          }
         }
       }
       setCategory("");
@@ -88,6 +110,7 @@ function Category() {
       setCategory(item.title);
       setExsistImage(item.image);
       setTags([]);
+      setSelectedId(item._id);
     } else if (action === "delete") {
       try {
         console.log(item);

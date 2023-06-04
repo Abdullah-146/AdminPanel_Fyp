@@ -135,3 +135,30 @@ export const getProductById = async (productId) => {
     return error;
   }
 };
+
+
+export const updateDiscount = async ({ productId, ...data }) => {
+  try{
+
+    let config = {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    }
+
+    const resp = await axios.put(
+      "/admin/products/product/discount",
+      {
+        productId,
+        ...data,
+      },
+      config
+    );
+
+    return resp.data;
+
+  }catch(err){
+    let error = errorHandler(err);
+    return error;
+  }
+};

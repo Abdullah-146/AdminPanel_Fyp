@@ -15,98 +15,164 @@ import { toast } from "react-toastify";
 import { socket } from "../App";
 Chart.register(CategoryScale);
 
-
 var sound = new Audio("/sounds/notification.wav");
-
 
 function Dashboard() {
   const [search, setSearch] = useState("");
   const [orders, setOrders] = useState([]);
-  const [display, setDisplay] = useState([]);
+  const [resNext, setResNext] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
   const navigate = useNavigate();
 
+  //===================================================================================================
+  // Socket IO
+  useEffect(() => {
+    socket.on("disconnect", () => {
+      console.log("Connected: ", socket.connected); // false
+    });
 
+    socket.on("connect_error", (err) => {
+      console.log(err instanceof Error); // true
+      console.log(err.message); // not authorized
+      console.log(err.data); // { content: "Please retry later" }
+    });
 
-useEffect(()=>{
-  socket.on("disconnect", () => {
-    console.log("Connected: ", socket.connected); // false
-  });
-  
-  
-  socket.on("connect_error", (err) => {
-    console.log(err instanceof Error); // true
-    console.log(err.message); // not authorized
-    console.log(err.data); // { content: "Please retry later" }
-  });
-  
-  
-  socket.on("order", (data) => {
-    toast.success(
-      "An order has been placed",
-    );
-    sound.play();
-    console.log(data);
-  });
-},[socket]);
+    socket.on("order", (data) => {
+      toast.success("An order has been placed");
+      sound.play();
+      console.log(data);
+    });
+  }, [socket]);
 
-
-const handlePagination = (action,limit,cursor) => {
-  try{
-
-    if(action==="next"){
-      
-    }
-    else if(action==="prev"){
-
-    }
-
-
-  }catch(err){
-    console.log(err);
-  }
-}
-
-const handleSearch = async(e) => {
-  try{
-    setSearch(e.target.value);
-    setDisplay(orders.filter((order)=>order.title.toLowerCase().includes(e.target.value.toLowerCase())));
-    if(hasNextPage){
-      if(display.length<10){
-        let res = await getOrders({filter:search!==""?{}:{}  ,cursor:display[display.length-1]._id,limit:10});
-        setOrders([...orders,...res.data]);
-        setHasNextPage(res.hasNextPage);
-      }
-    }
-  }catch(err){
-    console.log(err);
-  }
-}
-
-
-React.useEffect(()=>{
-  
-},[])
-
+  //===================================================================================================
 
   React.useEffect(() => {
     const callApi = async () => {
-      const response = await getOrders({filter:search!==""?{status:{$regex:search,options:'i'}}:{}});
-      setHasNextPage(response.hasNextPage);
+      const response = await getOrders({ limit: 20 });
       setOrders(response.data);
-      setDisplay(response.data);
+      setData(response.data.slice(0, 10));
+      setHasNextPage(response.hasNextPage);
+      setResNext(response.hasNextPage);
+      setLoading(false);
     };
-    callApi();
+    if (!loading) {
+      setLoading(true);
+      callApi();
+    }
   }, []);
 
+  //===================================================================================================
+  // Handling All Functionalities of Pagination for unFiltered Data
 
+  const handleNext = async () => {
+    try {
+      if (hasNextPage) {
+        let index = orders.findIndex(
+          (user) => user._id === data[data.length - 1]._id
+        );
+        if (orders[index + 1]) {
+          let res = orders.slice(index + 1, index + 11);
+          if (
+            res[res.length - 1]._id === orders[orders.length - 1]._id &&
+            !resNext
+          ) {
+            setHasNextPage(false);
+          }
+          setData([...res]);
+          setHasPreviousPage(true);
+        } else {
+          setLoading(true);
+          let res = await getOrders({
+            filter: search !== "" ? {} : {},
+            cursor: orders[orders.length - 1]._id,
+            limit: 10,
+          });
+          setOrders([...orders, ...res.data]);
+          setHasNextPage(res.hasNextPage);
+          setResNext(res.hasNextPage);
+          setHasPreviousPage(true);
+          setData([...res.data]);
+          setLoading(false);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  const handlePrevious = async () => {
+    const index = orders.findIndex((user) => user._id === data[0]._id);
+    if (index === -1) {
+      return;
+    }
+    const res = orders.slice(index - 10, index);
+    setData([...res]);
+    setHasNextPage(true);
+    if (index - 10 === 0) {
+      setHasPreviousPage(false);
+    }
+  };
+
+  //===================================================================================================
+  // Handling All Functionalities of Search and Load More for Search
+
+  //handleLoadMore loads more data when user yped in less words and wanting to see data in the table
+  const handleLoadMore = async () => {
+    try {
+      if (resNext) {
+        setLoading(true);
+        let res = await getOrders({
+          cursor: orders[orders.length - 1]._id,
+          limit: 10,
+        });
+        setOrders([...orders, ...res.data]);
+        setResNext(res.hasNextPage);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSearch = (search) => {
+    return orders.filter(
+      (order) =>
+        order?.userId?.name.toLowerCase().includes(search.toLowerCase()) ||
+        order?.status === search ||
+        order?.total.toString().includes(search.toLowerCase()) ||
+        order._id.toLowerCase().includes(search.toLowerCase())
+    );
+  };
+
+  //Search Display is the data that is displayed on the table when search is not empty
+  const searchDisplay = handleSearch(search);
+
+  /*Use Effect for Search thata runs when searchDisplay changes and 
+  loads more data if searchDisplay is less than 20 until 
+  resNext is false or length of searchDisplay is 20*/
+  React.useEffect(() => {
+    const callApi = async () => {
+      const response = await getOrders({
+        cursor: orders[orders.length - 1]._id,
+      });
+      setOrders([...orders, ...response.data]);
+      setResNext(response.hasNextPage);
+      setLoading(false);
+    };
+    if (!loading && resNext && search !== "" && searchDisplay.length < 20) {
+      setLoading(true);
+      callApi();
+    }
+  }, [searchDisplay]);
+
+  //===================================================================================================
 
   const handleCreateOrder = () => {
     navigate("/order");
-  }
-
-
+  };
 
   return (
     <Layout>
@@ -140,87 +206,100 @@ React.useEffect(()=>{
             style={{ margin: 0, maxWidth: "30%", padding: 10 }}
             type="search"
             id="input"
+            value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Orders"
           ></input>
-          <button onClick={handleCreateOrder} className={style.button}>Create Order</button>
+          <button onClick={handleCreateOrder} className={style.button}>
+            Create Order
+          </button>
         </div>
       </div>
-      <Table2 data={orders} />
+      <Table2
+        loading={loading}
+        data={search === "" ? data : searchDisplay}
+        search={search !== "" ? true : false}
+        hasNextPage={hasNextPage}
+        hasPreviousPage={hasPreviousPage}
+        handleNext={handleNext}
+        handlePrevious={handlePrevious}
+        loadMore={resNext}
+        handleLoadMore={handleLoadMore}
+      />
     </Layout>
-  // const [chartData, setChartData] = useState({
-  //   labels: Data.map((data) => data.year),
-  //   datasets: [
-  //     {
-  //       label: "Users Gained ",
-  //       data: Data.map((data) => data.userGain),
-  //       backgroundColor: [
-  //         "rgba(75,192,192,1)",
-  //         "#50AF95",
-  //         "#f3ba2f",
-  //         "#2a71d0",
-  //       ],
-  //       borderColor: "black",
-  //       borderWidth: 2,
-  //     },
-  //   ],
-  // });
-  // return (
-  //   <Layout>
-  //     <article>
-  //       <section>
-  //         <header>Total Sales</header>
-  //         <div className={style.inlineChart}>
-  //           <div className={style.info}>
-  //             <div className={style.value}>$36,146</div>
-  //             <div className={style.title}>Credit sales</div>
-  //           </div>
-  //         </div>
-  //         <div className={style.inlineChart}>
-  //           <div className={style.info}>
-  //             <div className={style.value}>$24,734</div>
-  //             <div className={style.title}>Channel Sales</div>
-  //           </div>
-  //         </div>
-  //         <div className={style.inlineChart}>
-  //           <div className={style.info}>
-  //             <div className={style.value}>$15,650</div>
-  //             <div className={style.title}>Direct Sales</div>
-  //           </div>
-  //         </div>
-  //       </section>
+    // const [chartData, setChartData] = useState({
+    //   labels: Data.map((data) => data.year),
+    //   datasets: [
+    //     {
+    //       label: "Users Gained ",
+    //       data: Data.map((data) => data.userGain),
+    //       backgroundColor: [
+    //         "rgba(75,192,192,1)",
+    //         "#50AF95",
+    //         "#f3ba2f",
+    //         "#2a71d0",
+    //       ],
+    //       borderColor: "black",
+    //       borderWidth: 2,
+    //     },
+    //   ],
+    // });
+    // return (
+    //   <Layout>
+    //     <article>
+    //       <section>
+    //         <header>Total Sales</header>
+    //         <div className={style.inlineChart}>
+    //           <div className={style.info}>
+    //             <div className={style.value}>$36,146</div>
+    //             <div className={style.title}>Credit sales</div>
+    //           </div>
+    //         </div>
+    //         <div className={style.inlineChart}>
+    //           <div className={style.info}>
+    //             <div className={style.value}>$24,734</div>
+    //             <div className={style.title}>Channel Sales</div>
+    //           </div>
+    //         </div>
+    //         <div className={style.inlineChart}>
+    //           <div className={style.info}>
+    //             <div className={style.value}>$15,650</div>
+    //             <div className={style.title}>Direct Sales</div>
+    //           </div>
+    //         </div>
+    //       </section>
 
-  //       <section>
-  //         <div className={style.chart}>
-  //           {/* <PieChart chartData={chartData} /> */}
-  //           <BarChart chartData={chartData} />
-  //           <LineChart chartData={chartData} />
-  //         </div>
-  //       </section>
-  //       <section>
-  //         <table>
-  //           <thead>
-  //             <tr>
-  //               <th>November Sales</th>
-  //               <th>Quantity</th>
-  //               <th>Total</th>
-  //             </tr>
-  //           </thead>
-  //           <tbody>
-  //             {saleData.map((item) => {
-  //               return (
-  //                 <tr>
-  //                   <td>{item.product}</td>
-  //                   <td>{item.quantity}</td>
-  //                   <td>{item.sale}</td>
-  //                 </tr>
-  //               );
-  //             })}
-  //           </tbody>
-  //         </table>
-  //       </section>
-  //     </article>
-  //   </Layout>
+    //       <section>
+    //         <div className={style.chart}>
+    //           {/* <PieChart chartData={chartData} /> */}
+    //           <BarChart chartData={chartData} />
+    //           <LineChart chartData={chartData} />
+    //         </div>
+    //       </section>
+    //       <section>
+    //         <table>
+    //           <thead>
+    //             <tr>
+    //               <th>November Sales</th>
+    //               <th>Quantity</th>
+    //               <th>Total</th>
+    //             </tr>
+    //           </thead>
+    //           <tbody>
+    //             {saleData.map((item) => {
+    //               return (
+    //                 <tr>
+    //                   <td>{item.product}</td>
+    //                   <td>{item.quantity}</td>
+    //                   <td>{item.sale}</td>
+    //                 </tr>
+    //               );
+    //             })}
+    //           </tbody>
+    //         </table>
+    //       </section>
+    //     </article>
+    //   </Layout>
   );
 }
 

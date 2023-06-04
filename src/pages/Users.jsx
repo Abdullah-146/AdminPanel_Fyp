@@ -11,43 +11,45 @@ function Users() {
   const [resNext, setResNext] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   React.useEffect(() => {
     const callApi = async () => {
-      const response = await getUsers({
-        filter: search ? { title: { $regex: search, options: "i" } } : {},
-      });
-      console.log(response.data);
+      const response = await getUsers({ limit: 20 });
       setUsers(response.data);
-      setData(response.data);
+      setData(response.data.slice(0, 10));
       setHasNextPage(response.hasNextPage);
+      setResNext(response.hasNextPage);
+      setLoading(false);
     };
+   if(!loading){
+    setLoading(true);
     callApi();
+   }
   }, []);
+
+  //===================================================================================================
+  // Handling All Functionalities of Pagination for unFiltered Data
 
   const handleNext = async () => {
     try {
-      if(search!=="" && hasNextPage){
-        const index = users.findIndex((user) => user._id === show[show.length - 1]._id);
-        const filtered = users.splice(index+1,index+11).filter((item) => {
-          return search.toLowerCase() === ""
-            ? item
-            : item?.name?.toLowerCase().includes(search) || item?.email?.toLowerCase().includes(search);
-        });
-      }
-      else if (hasNextPage) {
+      if (hasNextPage) {
         let index = users.findIndex(
           (user) => user._id === data[data.length - 1]._id
         );
         if (users[index + 1]) {
           let res = users.slice(index + 1, index + 11);
-          if (res[res.length - 1]._id === users[users.length - 1]._id && !resNext) {
+          if (
+            res[res.length - 1]._id === users[users.length - 1]._id &&
+            !resNext
+          ) {
             setHasNextPage(false);
           }
           setData([...res]);
           setHasPreviousPage(true);
         } else {
+          setLoading(true);
           let res = await getUsers({
             filter: search !== "" ? {} : {},
             cursor: users[users.length - 1]._id,
@@ -58,6 +60,7 @@ function Users() {
           setResNext(res.hasNextPage);
           setHasPreviousPage(true);
           setData([...res.data]);
+          setLoading(false);
         }
       }
     } catch (err) {
@@ -78,27 +81,60 @@ function Users() {
     }
   };
 
-  const handleSerach =  (array, search) => {
-    const res = array.filter((item) => {
-      return search.toLowerCase() === ""
-        ? item
-        : item?.name?.toLowerCase().includes(search) || item?.email?.toLowerCase().includes(search);
-    });
+  //===================================================================================================
+  // Handling All Functionalities of Search and Load More for Search
 
-    //if length is greater than 10 then slice it
-    if (res.length > 10) {
-      setHasNextPage(true);
-      setHasPreviousPage(false);
-      return res.slice(0, 10);
+  //handleLoadMore loads more data when user yped in less words and wanting to see data in the table
+  const handleLoadMore = async () => {
+    try {
+      if (resNext) {
+        setLoading(true);
+        let res = await getUsers({
+          cursor: users[users.length - 1]._id,
+          limit: 10,
+        });
+        setUsers([...users, ...res.data]);
+        setResNext(res.hasNextPage);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
     }
-    
+  };
 
-    return res;
-  }
+  const handleSearch = (search) => {
+    return users.filter(
+      (user) =>
+        user?.name.toLowerCase().includes(search.toLowerCase()) ||
+        user?.email.toLowerCase().includes(search.toLowerCase()) ||
+        user._id.toLowerCase().includes(search.toLowerCase())
+    );
+  };
 
+  //Search Display is the data that is displayed on the table when search is not empty
+  const searchDisplay = handleSearch(search);
 
-  const show = handleSerach((search!==""?users:data), search);
+  /*Use Effect for Search thata runs when searchDisplay changes and 
+  loads more data if searchDisplay is less than 20 until 
+  resNext is false or length of searchDisplay is 20*/
+  React.useEffect(() => {
+    const callApi = async () => {
+      console.log("FETCHING DATA");
+      const response = await getUsers({
+        cursor: users[users.length - 1]._id,
+      });
+      console.log("RESPONSE: ", response);
+      setUsers([...users, ...response.data]);
+      setResNext(response.hasNextPage);
+      setLoading(false);
+    };
+    if (!loading && resNext && search !== "" && searchDisplay.length < 20) {
+      setLoading(true);
+      callApi();
+    }
+  }, [searchDisplay]);
 
+  //===================================================================================================
 
   return (
     <Layout>
@@ -139,40 +175,16 @@ function Users() {
         </div>
       </div>
       <Table
-        data={show}
+        search={search !== "" ? true : false}
+        loading={loading}
+        data={search === "" ? data : searchDisplay}
         hasNextPage={hasNextPage}
         hasPreviousPage={hasPreviousPage}
         handleNext={handleNext}
         handlePrevious={handlePrevious}
+        loadMore={resNext}
+        handleLoadMore={handleLoadMore}
       />
-      {/* <table>
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Created</th>
-            <th scope="col">Status</th>
-            <th scope="col">Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data
-            .filter((item) => {
-              return search.toLowerCase() === ""
-                ? item
-                : item.Name.toLowerCase().includes(search);
-            })
-            .map((item) => {
-              return (
-                <tr>
-                  <td scope="row">{item.Name}</td>
-                  <td>{item.Created}</td>
-                  <td>{item.Status}</td>
-                  <td>{item.Email}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table> */}
     </Layout>
   );
 }

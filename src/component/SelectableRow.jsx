@@ -31,11 +31,11 @@ function SelectableRow({item,handleClick,...props}) {
   return (
     //TODO: Set Colors for selected and unselected
     <tr style={{backgroundColor:selected?"green": null }}>
-        <td style={{ paddingRight: 10 }}>{item._id}</td>
+        {!props.noId && <td style={{ paddingRight: 10 }}>{item._id}</td>}
 
         <td>{item.title}</td>
         <td>{item.price || 'None'}</td>
-        <td>{item.discount}</td>
+        <td>{item.discount || 'None'}</td>
         <td>{
             item.discount ? item.price - (item.price * item.discount / 100) : item.price
         }</td>

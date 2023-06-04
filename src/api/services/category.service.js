@@ -64,6 +64,29 @@ export const createCategory = async (category) => {
   }
 };
 
+export const updateCategory = async (category) => {
+  try {
+    let config = {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    };
+
+    const resp = await axios.put(
+      "/admin/categories/category",
+      {
+        ...category,
+      },
+      config
+    );
+
+    return resp.data;
+  } catch (err) {
+    let error = errorHandler(err);
+    throw error;
+  }
+};
+
 export const deleteCategory = async (categoryId) => {
   try {
     let config = {
@@ -72,13 +95,12 @@ export const deleteCategory = async (categoryId) => {
       },
     };
 
-    const resp = await axios.delete(
-      "/admin/categories/category",{
+    const resp = await axios.delete("/admin/categories/category", {
       config,
-      data:{
+      data: {
         categoryId,
-      },}
-    );
+      },
+    });
     return resp.data;
   } catch (err) {
     let error = errorHandler(err);
