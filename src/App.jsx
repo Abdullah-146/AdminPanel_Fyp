@@ -16,35 +16,33 @@ import Products from "./pages/Products";
 import Tables from "./pages/Tables";
 import CreateProduct from "./pages/CreateProduct";
 import Notification from "./pages/Notifications";
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 import Category from "./pages/Category";
 import Discount from "./pages/Discount";
+import OrderDetails from "./pages/OrderDetails";
+import Deals from "./pages/Deals";
+import Deal from "./pages/Deal";
 
-
-
-export const socket = io('http://localhost:5000',{
+export const socket = io("http://localhost:5000", {
   auth: {
-      token: localStorage.getItem("accessToken")
-  }
+    token: localStorage.getItem("accessToken"),
+  },
 });
 
 function App() {
-
-  
-useEffect(()=>{
-  socket.on('connect',()=>{
-    console.log('connected');
-  });
-  
-},[]);
-
-
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+  }, []);
 
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/CreateQr" element={<CreateQr />} />
       <Route path="/order" element={<ManualOrder />} />
+      <Route path="/deals" element={<Deals />} />
+      <Route path="/deal/:id" element={<Deal />} />
       <Route path="/invoice" element={<Invoice />} />
       <Route path="/login" element={<Login />} />
       <Route path="/update-product" element={<UpdateProduct />} />
@@ -61,6 +59,7 @@ useEffect(()=>{
       <Route path="/Tables" element={<Tables />} />
       <Route path="/create-product" element={<CreateProduct />} />
       <Route path="/Notification" element={<Notification />} />
+      <Route path="/OrderDetails/:id" element={<OrderDetails />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );

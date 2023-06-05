@@ -86,7 +86,7 @@ export const deleteDeal = async (dealId) => {
       },
     };
 
-    const resp = await axios.delete("/admin/deals/deal", { dealId }, config);
+    const resp = await axios.delete("/admin/deals/deal", {config, data: { dealId }});
     return resp.data;
   } catch (err) {
     let error = errorHandler(err);

@@ -7,10 +7,8 @@ const getAccessToken = () => {
   // return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDNlNWYwNTA5MGEwY2VlMzg4NzQ5OTciLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImFkbWluIjp0cnVlLCJpYXQiOjE2ODQ2ODU0NTR9.cT5rCgW_QOv88jw50gEPQBjoOAS7ABUOsJDkoJ4TvEQ"
 };
 
-
 export const createOrder = async (data) => {
-  try{
-
+  try {
     let config = {
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
@@ -19,13 +17,11 @@ export const createOrder = async (data) => {
 
     const resp = await axios.post("/admin/orders/create", data, config);
     return resp.data;
-
-  }catch(err){
+  } catch (err) {
     let error = errorHandler(err);
     return error;
   }
-}
-
+};
 
 export const getOrders = async ({ cursor, limit, filter }) => {
   try {
@@ -50,7 +46,7 @@ export const getOrders = async ({ cursor, limit, filter }) => {
     return error;
   }
 };
-
+//Todo : get order by id API to be written on Backend
 export const getOrderById = async (orderId) => {
   try {
     let config = {
