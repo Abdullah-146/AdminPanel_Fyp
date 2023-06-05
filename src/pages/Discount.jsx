@@ -1,28 +1,24 @@
 import React, { useEffect } from "react";
 import Layout from "../Layout/Layout";
 import style from "../assets/css/users.module.css";
-import {
-  createCategory,
-  deleteCategory,
-  getCategories,
-} from "../api/services/category.service";
+
 import { uploadImage } from "../api/services/upload.service";
 import { toast } from "react-toastify";
 import CategoryTable from "../component/CategoryTable";
 import ManualOrderTable from "../component/ManualOrderTable";
 import {
   getProductsList,
-  updateDiscount,
 } from "../api/services/product.service";
 import DiscountTable from "../component/DiscountTable";
 
 function Discount() {
-  const [edit, setEdit] = React.useState(false);
   const [search, setSearch] = React.useState("");
-  const [data, setData] = React.useState([]);
-  const [discount, setDiscount] = React.useState(0);
-  const [total, setTotal] = React.useState(0);
-  const [selected, setSelected] = React.useState({});
+  const [data, setData] = React.useState({
+    title:"",
+    description:"",
+    image:"",
+    products:[]
+  });
 
   useEffect(() => {
     const callApi = async () => {
@@ -36,71 +32,72 @@ function Discount() {
     callApi();
   }, []);
 
-  const handleSubmit = async () => {
-    try {
-      let res = null;
-      if(selected?._id){
-        res = await updateDiscount({
-          productId: selected._id,
-          discount: discount,
-        });
-      }else{
-        toast.error("Please Select a Product");
-      }
+  // const handleSubmit = async () => {
+  //   try {
+  //     let res = null;
+  //     if(selected?._id){
+  //       res = await updateDiscount({
+  //         productId: selected._id,
+  //         discount: discount,
+  //       });
+  //     }else{
+  //       toast.error("Please Select a Product");
+  //     }
 
-      if (res) {
-        if (res.status === "OK") {
-          toast.success("Discount Modified Successfully");
-          setData(
-            data.map((item) => {
-              if (item._id === selected._id) {
-                return {
-                  ...item,
-                  discount: discount,
-                };
-              }
-              return item;
-            })
-          );
-          setSelected({});
-          setDiscount(0);
-          setTotal(0);
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     if (res) {
+  //       if (res.status === "OK") {
+  //         toast.success("Discount Modified Successfully");
+  //         setData(
+  //           data.map((item) => {
+  //             if (item._id === selected._id) {
+  //               return {
+  //                 ...item,
+  //                 discount: discount,
+  //               };
+  //             }
+  //             return item;
+  //           })
+  //         );
+  //         setSelected({});
+  //         setDiscount(0);
+  //         setTotal(0);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const handleTableClick = async (action, item) => {
     if (action === "edit") {
-      setSelected(item);
-      setDiscount(item.discount || 0);
-      setTotal(item.price || 0);
     } else if (action === "delete") {
-      try {
-        let res = await updateDiscount({ productId: item._id });
-        if (res) {
-          if (res.status === "OK") {
-            toast.success("Discount Removed Successfully");
-            setData(
-              data.map((item2) => {
-                if (item2._id === item._id) {
-                  return {
-                    ...item2,
-                    discount: res.data.discount,
-                  };
-                }
-                return item2;
-              })
-            );
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      }
+      // try {
+      //   let res = await updateDiscount({ productId: item._id });
+      //   if (res) {
+      //     if (res.status === "OK") {
+      //       toast.success("Discount Removed Successfully");
+      //       setData(
+      //         data.map((item2) => {
+      //           if (item2._id === item._id) {
+      //             return {
+      //               ...item2,
+      //               discount: res.data.discount,
+      //             };
+      //           }
+      //           return item2;
+      //         })
+      //       );
+      //     }
+      //   }
+      // } catch (err) {
+      //   console.log(err);
+      // }
     }
   };
+
+  const handleSubmit = ()=>{
+
+  }
 
   const handleSearch = (search) => {
     if (search === "") {
@@ -208,7 +205,7 @@ function Discount() {
                 id="input"
                 onChange={(e) => setDiscount(e.target.value)}
                 placeholder="Discount"
-                value={discount}
+                
               ></input>
               <p>%</p>
             </div>
@@ -222,20 +219,9 @@ function Discount() {
               }}
             >
               <p style={{ width: 100 }}>Price: </p>
-              <p>{total}</p>
+              <p>{23}</p>
             </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                // flex: 1,
-                gap: 10,
-              }}
-            >
-              <p style={{ width: 100 }}>Total: </p>
-              <p>{total - (total * (discount ? discount : 0)) / 100}</p>
-            </div>
+
             <div
               style={{
                 marginRight: 18,
@@ -247,9 +233,6 @@ function Discount() {
               {selected?._id && <>
                 <button onClick={handleSubmit}>Discount</button>
                 <button onClick={()=>{
-                  setSelected({});
-                  setDiscount(0);
-                  setTotal(0);
                 }}>Cancel</button>
 
               </>}

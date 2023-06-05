@@ -38,7 +38,7 @@ function Table2(props) {
 
   return (
     <table style={{ overflowY: "scroll" }}>
-      <thead style={{ paddingTop: 15, paddingBottom: 15,  cursor:"pointer", display:"flex", justifyContent:"flex-end",alignItems:"center"  }}>
+      <thead style={{ paddingTop: 15, paddingBottom: 15,width:"600%",  cursor:"pointer", display:"flex", justifyContent:"flex-end",alignItems:"center"  }}>
       <p style={{ color: "red" }}>{props.loading && "Loading..."}</p>
         <div
           style={{
