@@ -80,7 +80,7 @@ function Deals() {
             fontWeight: "normal",
           }}
         >
-          Dashboard
+          Deals
         </p>
         <div
           style={{

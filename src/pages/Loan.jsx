@@ -2,9 +2,23 @@ import React, { useState } from "react";
 import Layout from "../Layout/Layout";
 import style from "../assets/css/users.module.css";
 import data from "../utils/Userdata";
+import { loanRequests } from "../api/services/loan.service";
 function Loan() {
   const [search, setSearch] = useState("");
-  console.log(search);
+  const [data, setData] = useState([]);
+
+  React.useEffect(() => {
+    const callApi = async () => {
+      try {
+        const res = await loanRequests("Approved");
+        setData(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    callApi();
+  }, []);
+
   return (
     <Layout>
       <input
@@ -18,6 +32,7 @@ function Loan() {
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
+            <th scope="col">Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -25,13 +40,14 @@ function Loan() {
             .filter((item) => {
               return search.toLowerCase() === ""
                 ? item
-                : item.Name.toLowerCase().includes(search);
+                : item.Name.toLowerCase().includes(search.toLowerCase());
             })
             .map((item) => {
               return (
                 <tr>
-                  <td scope="row">{item.Name}</td>
-                  <td>{item.Email}</td>
+                  <td scope="row">{item.user.name}</td>
+                  <td>{item.user.email}</td>
+                  <td>{item.amount}</td>
                 </tr>
               );
             })}
