@@ -50,7 +50,7 @@ function App() {
       <Route path="/invoice" element={<Invoice />} />
       <Route path="/login" element={<Login />} />
       <Route path="/update-product" element={<UpdateProduct />} />
-      <Route path="/product/:productId" element={<Product />} />
+      <Route path="/product/:id" element={<Product />} />
       <Route path="/loan" element={<Loan />} />
       <Route path="/loanRequest" element={<LoanRequest />} />
       <Route path="/crud" element={<CRUD />} />

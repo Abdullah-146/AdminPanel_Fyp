@@ -40,10 +40,12 @@ function Dashboard() {
       console.log(err.data); // { content: "Please retry later" }
     });
 
-    socket.on("order", (data) => {
+    //TODO: add the order to the table
+    socket.on("order", (add) => {
       toast.success("An order has been placed");
       sound.play();
-      console.log(data);
+      console.log(add);
+      
     });
   }, [socket]);
 
@@ -52,6 +54,7 @@ function Dashboard() {
   React.useEffect(() => {
     const callApi = async () => {
       const response = await getOrders({ limit: 20 });
+      console.log(response);
       setOrders(response.data);
       setData(response.data.slice(0, 10));
       setHasNextPage(response.hasNextPage);

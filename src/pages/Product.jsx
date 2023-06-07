@@ -9,14 +9,13 @@ import parse from "html-react-parser";
 function Product() {
   const [product, setProduct] = useState({});
   const navigate = useNavigate();
-  const { productId } = useParams();
+  const { id } = useParams();
 
   React.useEffect(() => {
     const callAPi = async () => {
       try {
-        console.log("HERE",productId);
-        const response = await getProductById(productId);
-        console.log(response.data);
+        const response = await getProductById(id);
+        console.log("THIS: ",response.data);
         setProduct(response.data);
       } catch (e) {
         console.log(e);
@@ -42,8 +41,7 @@ function Product() {
           <article>
             <h5 style={{ color: "black" }}>Description</h5>
             <p>
-              {console.log(product.description)}
-              {parse(product.description)}
+              {parse(product?.description || "")}
             </p>
           </article>
 

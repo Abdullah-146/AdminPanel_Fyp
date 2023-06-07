@@ -91,15 +91,15 @@ function Table(props) {
           </tr>
         ))}
       </tbody>
-      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
+      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer"}}>
         {!props.search ? (
           <td
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              width: "600%",
             }}
-            colSpan={0}
           >
             {props.hasPreviousPage && <p onClick={handlePrevious}>Previous</p>}
             <p>1-1 of 7</p>
