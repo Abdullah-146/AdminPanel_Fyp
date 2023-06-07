@@ -17,7 +17,6 @@ function Products() {
 
   const navigate = useNavigate();
 
-
   //=========================================================================================
 
   React.useEffect(() => {
@@ -142,10 +141,9 @@ function Products() {
 
   //=========================================================================================
 
-  const handleClick = async (action,id) => {
-    if(action==="edit"){
-    }
-    else if(action==="delete"){
+  const handleClick = async (action, id) => {
+    if (action === "edit") {
+    } else if (action === "delete") {
       try {
         const response = await deleteProduct(id);
         if (response.status === "OK") {
@@ -179,6 +177,7 @@ function Products() {
           style={{
             color: "white",
             marginBottom: 2,
+            padding: 5,
             fontSize: 30,
             fontWeight: "normal",
           }}

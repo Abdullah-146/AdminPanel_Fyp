@@ -23,10 +23,10 @@ function Users() {
       setResNext(response.hasNextPage);
       setLoading(false);
     };
-   if(!loading){
-    setLoading(true);
-    callApi();
-   }
+    if (!loading) {
+      setLoading(true);
+      callApi();
+    }
   }, []);
 
   //===================================================================================================
@@ -150,6 +150,7 @@ function Users() {
           style={{
             color: "white",
             marginBottom: 2,
+            padding: 5,
             fontSize: 30,
             fontWeight: "normal",
           }}

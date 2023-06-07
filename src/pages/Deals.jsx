@@ -76,6 +76,7 @@ function Deals() {
           style={{
             color: "white",
             marginBottom: 2,
+            padding: 5,
             fontSize: 30,
             fontWeight: "normal",
           }}

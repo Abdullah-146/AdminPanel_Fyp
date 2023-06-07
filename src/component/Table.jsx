@@ -33,7 +33,6 @@ function Table(props) {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "flex-end",
               gap: 10,
               fontSize: 20,
             }}
@@ -91,7 +90,7 @@ function Table(props) {
           </tr>
         ))}
       </tbody>
-      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer"}}>
+      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
         {!props.search ? (
           <td
             style={{

@@ -22,7 +22,7 @@ import Discount from "./pages/Discount";
 import OrderDetails from "./pages/OrderDetails";
 import Deals from "./pages/Deals";
 import Deal from "./pages/Deal";
-import CreateDeal from "./pages/createDeal";
+import CreateDeal from "./pages/CreateDeal";
 import EditDeal from "./pages/EditDeal";
 
 export const socket = io("http://localhost:5000", {

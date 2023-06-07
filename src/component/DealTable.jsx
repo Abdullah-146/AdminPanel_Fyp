@@ -21,7 +21,6 @@ function DealTable(props) {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "flex-end",
               gap: 10,
               fontSize: 20,
             }}
@@ -54,7 +53,7 @@ function DealTable(props) {
                 wigdth={50}
                 height={50}
                 style={{ borderRadius: 100 }}
-                src={ item.image || ImagePlaceHolder}
+                src={item.image || ImagePlaceHolder}
                 alt=""
               />
             </td>
@@ -79,7 +78,6 @@ function DealTable(props) {
           </tr>
         ))}
       </tbody>
-
     </table>
   );
 }

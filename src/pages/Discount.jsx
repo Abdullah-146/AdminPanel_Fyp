@@ -39,12 +39,12 @@ function Discount() {
   const handleSubmit = async () => {
     try {
       let res = null;
-      if(selected?._id){
+      if (selected?._id) {
         res = await updateDiscount({
           productId: selected._id,
           discount: discount,
         });
-      }else{
+      } else {
         toast.error("Please Select a Product");
       }
 
@@ -141,7 +141,7 @@ function Discount() {
         <div
           style={{
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "column",
             // alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap-reverse",
@@ -150,7 +150,6 @@ function Discount() {
         >
           <div
             style={{
-              flex: 1,
               display: "flex",
               flexDirection: "column",
               gap: 20,
@@ -244,15 +243,20 @@ function Discount() {
                 justifyContent: "flex-end",
               }}
             >
-              {selected?._id && <>
-                <button onClick={handleSubmit}>Discount</button>
-                <button onClick={()=>{
-                  setSelected({});
-                  setDiscount(0);
-                  setTotal(0);
-                }}>Cancel</button>
-
-              </>}
+              {selected?._id && (
+                <>
+                  <button onClick={handleSubmit}>Discount</button>
+                  <button
+                    onClick={() => {
+                      setSelected({});
+                      setDiscount(0);
+                      setTotal(0);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <div
