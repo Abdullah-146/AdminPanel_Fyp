@@ -5,22 +5,29 @@ import {
   createCategory,
   deleteCategory,
   getCategories,
-  updateCategory,
 } from "../api/services/category.service";
 import { uploadImage } from "../api/services/upload.service";
 import { toast } from "react-toastify";
-import { getDealById } from "../api/services/deal.service";
+import CategoryTable from "../component/CategoryTable";
+import ManualOrderTable from "../component/ManualOrderTable";
+import {
+  getProductsList,
+  updateDiscount,
+} from "../api/services/product.service";
+import DiscountTable from "../component/DiscountTable";
 
 function Discount() {
   const [edit, setEdit] = React.useState(false);
-  const [data, setData] = React.useState({});
-  const [image, setImage] = React.useState(null);
-
+  const [search, setSearch] = React.useState("");
+  const [data, setData] = React.useState([]);
+  const [discount, setDiscount] = React.useState(0);
+  const [total, setTotal] = React.useState(0);
+  const [selected, setSelected] = React.useState({});
 
   useEffect(() => {
     const callApi = async () => {
       try {
-        const res = await getDealById("644a2c315d1ee6441391303e");
+        const res = await getProductsList();
         setData(res.data);
       } catch (err) {
         console.log(err);
@@ -29,73 +36,37 @@ function Discount() {
     callApi();
   }, []);
 
-  const handleTagChange = (e) => {
-    if (e.key === "Enter") {
-      if (!tags.includes(e.target.value)) {
-        setTags([...tags, e.target.value]);
-      }
-      e.target.value = "";
-    }
-  };
-
-  const handleTagRemove = (tag) => {
-    setTags(tags.filter((item) => item !== tag));
-  };
-
   const handleSubmit = async () => {
     try {
       let res = null;
-      let fileData = null;
-      if (image) {
-        const formData = new FormData();
-        formData.append("file", image);
-        fileData = await uploadImage(formData);
-
-        if (fileData.status !== "OK") {
-          fileData = null;
-        }
-      }
-      let file = {};
-      if (fileData) {
-        file = { image: fileData.data.url };
-      }
-      if (edit) {
-
-        res = await updateCategory({
-          categoryId: selectedId,
-          title: category,
-          ...file,
-        })
-
-      } else {
-        res = await createCategory({
-          title: category,
-          ...file,
-          subCategory: tags,
+      if(selected?._id){
+        res = await updateDiscount({
+          productId: selected._id,
+          discount: discount,
         });
+      }else{
+        toast.error("Please Select a Product");
       }
+
       if (res) {
         if (res.status === "OK") {
-          toast.success("Done Successfully");
-          if(edit){
-            setData(
-              data.map((item) => {
-                if (item._id === selectedId) {
-                  return res.data
+          toast.success("Discount Modified Successfully");
+          setData(
+            data.map((item) => {
+              if (item._id === selected._id) {
+                return {
+                  ...item,
+                  discount: discount,
                 };
-                return item;
               }
-              )
-            );
-          }
-          else{
-            setData([...data, res.data]);
-          }
+              return item;
+            })
+          );
+          setSelected({});
+          setDiscount(0);
+          setTotal(0);
         }
       }
-      setCategory("");
-      setTags([]);
-      setEdit(false);
     } catch (err) {
       console.log(err);
     }
@@ -103,24 +74,48 @@ function Discount() {
 
   const handleTableClick = async (action, item) => {
     if (action === "edit") {
-      setEdit(true);
-      setCategory(item.title);
-      setExsistImage(item.image);
-      setTags([]);
-      setSelectedId(item._id);
+      setSelected(item);
+      setDiscount(item.discount || 0);
+      setTotal(item.price || 0);
     } else if (action === "delete") {
       try {
-        console.log(item);
-        const res = await deleteCategory(item._id);
-        if (res.status === "OK") {
-          toast.success(res.data.msg);
-          setData(data.filter((category) => category._id !== item._id));
+        let res = await updateDiscount({ productId: item._id });
+        if (res) {
+          if (res.status === "OK") {
+            toast.success("Discount Removed Successfully");
+            setData(
+              data.map((item2) => {
+                if (item2._id === item._id) {
+                  return {
+                    ...item2,
+                    discount: res.data.discount,
+                  };
+                }
+                return item2;
+              })
+            );
+          }
         }
       } catch (err) {
         console.log(err);
       }
     }
   };
+
+  const handleSearch = (search) => {
+    if (search === "") {
+      return data;
+    } else {
+      return data.filter(
+        (item) =>
+          item.title.toLowerCase().includes(search.toLowerCase()) ||
+          item.category.includes(search.toLowerCase()) ||
+          item.price.toString().includes(search.toLowerCase())
+      );
+    }
+  };
+
+  const displayProducts = handleSearch(search);
 
   return (
     <Layout>
@@ -143,7 +138,16 @@ function Discount() {
         >
           Discount
         </p>
-        
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            // alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap-reverse",
+            marginTop: 30,
+          }}
+        >
           <div
             style={{
               flex: 1,
@@ -157,129 +161,132 @@ function Discount() {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                flex: 1,
+                // flex: 1,
                 gap: 10,
               }}
             >
-              <p style={{ width: 100 }}>Title: </p>
-              <input
-                style={{ margin: 0, maxWidth: "30%", padding: 10 }}
-                type="search"
-                id="input"
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Add Discount"
-                value={category}
-              ></input>
+              <p style={{ width: 100 }}>Id: </p>
+              <p>{selected._id}</p>
             </div>
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                flex: 1,
+                // flex: 1,
                 gap: 10,
               }}
             >
-              <p style={{ width: 100 }}>Image: </p>
-              <input
-                style={{ margin: 0, padding: 10 }}
-                type="file"
-                id="input"
-                onChange={(e) => setImage(e.target.files[0])}
-              ></input>
-              {edit && (
-                <img
-                  src={exsistImage}
-                  alt=""
-                  style={{ width: 60, height: 60 }}
-                />
-              )}
+              <p style={{ width: 100 }}>Title: </p>
+              <p>{selected.title}</p>
             </div>
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
-                flex: 1,
+                alignItems: "center",
+                // flex: 1,
                 gap: 10,
               }}
             >
-              <p style={{ width: 100 }}>SubCategory: </p>
-              <div
+              <p style={{ width: 100 }}>Discount: </p>
+              <input
                 style={{
-                  flex: 1,
-                  backgroundColor: "#0f172a",
-                  padding: 10,
                   margin: 0,
-                  maxWidth: "80%",
-                  borderRadius: 6,
-                  minHeight: 100,
+                  maxWidth: "30%",
+                  padding: 10,
+                  backgroundColor: "#0F172A",
+                  outline: "none",
+                  border: "none",
+                  color: "white",
+                  borderRadius: "5px",
                 }}
-              >
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      padding: 5,
-                      margin: 5,
-                      backgroundColor: "skyblue",
-                      borderRadius: 6,
-                    }}
-                  >
-                    {tag}{" "}
-                    <span
-                      onClick={() => handleTagRemove(tag)}
-                      style={{
-                        backgroundColor: "red",
-                        padding: 5,
-                        paddingTop: 2,
-                        paddingBottom: 2,
-                        borderRadius: 7,
-                        marginLeft: 5,
-                        marginRight: 5,
-                      }}
-                    >
-                      X
-                    </span>
-                  </span>
-                ))}
-                <input
-                  style={{
-                    border: "none",
-                    backgroundColor: "#0f172a",
-                    outline: "none",
-                  }}
-                  placeholder="Add"
-                  onKeyDown={handleTagChange}
-                />
-              </div>
+                disabled={!selected?._id}
+                min={0}
+                max={100}
+                type="number"
+                id="input"
+                onChange={(e) => setDiscount(e.target.value)}
+                placeholder="Discount"
+                value={discount}
+              ></input>
+              <p>%</p>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                // flex: 1,
+                gap: 10,
+              }}
+            >
+              <p style={{ width: 100 }}>Price: </p>
+              <p>{total}</p>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                // flex: 1,
+                gap: 10,
+              }}
+            >
+              <p style={{ width: 100 }}>Total: </p>
+              <p>{total - (total * (discount ? discount : 0)) / 100}</p>
             </div>
             <div
               style={{
                 marginRight: 18,
-                flex: 1,
+                // flex: 1,
                 display: "flex",
                 justifyContent: "flex-end",
               }}
             >
-              {!edit ? (
-                <button onClick={handleSubmit}>Add Discount</button>
-              ) : (
-                <>
-                  <button onClick={handleSubmit}>Edit Discount</button>
-                  <button
-                    onClick={() => {
-                      setEdit(false);
-                      setCategory("");
-                      setTags([]);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </>
-              )}
+              {selected?._id && <>
+                <button onClick={handleSubmit}>Discount</button>
+                <button onClick={()=>{
+                  setSelected({});
+                  setDiscount(0);
+                  setTotal(0);
+                }}>Cancel</button>
+
+              </>}
             </div>
           </div>
-        
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 20,
+              }}
+            >
+              <input
+                style={{ margin: 0, maxWidth: "70%", padding: 10 }}
+                type="search"
+                id="input"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search Products"
+              ></input>
+            </div>
+            <DiscountTable
+              selected={selected}
+              data={displayProducts}
+              handleClick={handleTableClick}
+            />
+          </div>
+        </div>
       </div>
     </Layout>
   );

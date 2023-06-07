@@ -10,17 +10,21 @@ import {
 import { uploadImage } from "../api/services/upload.service";
 import { toast } from "react-toastify";
 import { getDealById } from "../api/services/deal.service";
+import { useNavigate, useParams } from "react-router";
+import ImagePlaceHolder from "../assets/ImagePlaceHolder.png";
 
 function Deal() {
-  const [edit, setEdit] = React.useState(false);
+  const navigate = useNavigate();
   const [data, setData] = React.useState({});
   const [image, setImage] = React.useState(null);
+  const {dealId} = useParams();
 
 
   useEffect(() => {
     const callApi = async () => {
       try {
-        const res = await getDealById("644a2c315d1ee6441391303e");
+        const res = await getDealById(dealId);
+        console.log(res.data);
         setData(res.data);
       } catch (err) {
         console.log(err);
@@ -29,98 +33,15 @@ function Deal() {
     callApi();
   }, []);
 
-  const handleTagChange = (e) => {
-    if (e.key === "Enter") {
-      if (!tags.includes(e.target.value)) {
-        setTags([...tags, e.target.value]);
-      }
-      e.target.value = "";
-    }
-  };
+  const dateTimeFormatter = (date) => {
+    const d = new Date(date);
+    return `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+  }
+  
 
-  const handleTagRemove = (tag) => {
-    setTags(tags.filter((item) => item !== tag));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      let res = null;
-      let fileData = null;
-      if (image) {
-        const formData = new FormData();
-        formData.append("file", image);
-        fileData = await uploadImage(formData);
-
-        if (fileData.status !== "OK") {
-          fileData = null;
-        }
-      }
-      let file = {};
-      if (fileData) {
-        file = { image: fileData.data.url };
-      }
-      if (edit) {
-
-        res = await updateCategory({
-          categoryId: selectedId,
-          title: category,
-          ...file,
-        })
-
-      } else {
-        res = await createCategory({
-          title: category,
-          ...file,
-          subCategory: tags,
-        });
-      }
-      if (res) {
-        if (res.status === "OK") {
-          toast.success("Done Successfully");
-          if(edit){
-            setData(
-              data.map((item) => {
-                if (item._id === selectedId) {
-                  return res.data
-                };
-                return item;
-              }
-              )
-            );
-          }
-          else{
-            setData([...data, res.data]);
-          }
-        }
-      }
-      setCategory("");
-      setTags([]);
-      setEdit(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleTableClick = async (action, item) => {
-    if (action === "edit") {
-      setEdit(true);
-      setCategory(item.title);
-      setExsistImage(item.image);
-      setTags([]);
-      setSelectedId(item._id);
-    } else if (action === "delete") {
-      try {
-        console.log(item);
-        const res = await deleteCategory(item._id);
-        if (res.status === "OK") {
-          toast.success(res.data.msg);
-          setData(data.filter((category) => category._id !== item._id));
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+  const handleEdit =  () => {
+    navigate(`/editDeal/${data._id}`);
+  }
 
   return (
     <Layout>
@@ -161,15 +82,8 @@ function Deal() {
                 gap: 10,
               }}
             >
-              <p style={{ width: 100 }}>Title: </p>
-              <input
-                style={{ margin: 0, maxWidth: "30%", padding: 10 }}
-                type="search"
-                id="input"
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Add Deal"
-                value={category}
-              ></input>
+              <p style={{ width: 100 }}>Image: </p>
+              <img src={data.image || ImagePlaceHolder} alt="" style={{ width: 300, height: 300 }} />
             </div>
             <div
               style={{
@@ -180,20 +94,9 @@ function Deal() {
                 gap: 10,
               }}
             >
-              <p style={{ width: 100 }}>Image: </p>
-              <input
-                style={{ margin: 0, padding: 10 }}
-                type="file"
-                id="input"
-                onChange={(e) => setImage(e.target.files[0])}
-              ></input>
-              {edit && (
-                <img
-                  src={exsistImage}
-                  alt=""
-                  style={{ width: 60, height: 60 }}
-                />
-              )}
+              <p style={{ width: 100 }}>Title: </p>
+             <p>{data.title}</p>
+              
             </div>
             <div
               style={{
@@ -203,56 +106,73 @@ function Deal() {
                 gap: 10,
               }}
             >
-              <p style={{ width: 100 }}>SubCategory: </p>
-              <div
-                style={{
-                  flex: 1,
-                  backgroundColor: "#0f172a",
-                  padding: 10,
-                  margin: 0,
-                  maxWidth: "80%",
-                  borderRadius: 6,
-                  minHeight: 100,
-                }}
-              >
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      padding: 5,
-                      margin: 5,
-                      backgroundColor: "skyblue",
-                      borderRadius: 6,
-                    }}
-                  >
-                    {tag}{" "}
-                    <span
-                      onClick={() => handleTagRemove(tag)}
-                      style={{
-                        backgroundColor: "red",
-                        padding: 5,
-                        paddingTop: 2,
-                        paddingBottom: 2,
-                        borderRadius: 7,
-                        marginLeft: 5,
-                        marginRight: 5,
-                      }}
-                    >
-                      X
-                    </span>
-                  </span>
-                ))}
-                <input
-                  style={{
-                    border: "none",
-                    backgroundColor: "#0f172a",
-                    outline: "none",
-                  }}
-                  placeholder="Add"
-                  onKeyDown={handleTagChange}
-                />
-              </div>
+              <p style={{ width: 100 }}>Description: </p>
+              <p>{data.description}</p>
+              
             </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flex: 1,
+                gap: 10,
+              }}
+            >
+              <p style={{ width: 100 }}>Products: </p>
+              <div style={{display:"flex",flexDirection:"column",flex:1,maxWidth:"50%",rowGap:20}}>
+                {
+                  data.products?.map((item) => 
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:40}}>
+                        <img src={item.product.image || ImagePlaceHolder} alt="" style={{ width: 50, height: 50 }} />
+                        <p>{item.product.title}</p>
+                      </div>
+                      <div>
+                        <p>{item.product.price} x {item.quantity}</p>
+                      </div>
+                    </div>
+                  )
+                }
+              </div>
+
+              
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flex: 1,
+                gap: 10,
+              }}
+            >
+              <p style={{ width: 100 }}>Total Price: </p>
+              <p>{data.price}</p>
+              
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flex: 1,
+                gap: 10,
+              }}
+            >
+              <p style={{ width: 100 }}>Status: </p>
+              <p>{data.status}</p>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flex: 1,
+                gap: 10,
+              }}
+            >
+              <p style={{ width: 100 }}>Created On: </p>
+              <p>{dateTimeFormatter(data.createdAt)}</p>
+            </div>
+
+
             <div
               style={{
                 marginRight: 18,
@@ -261,22 +181,7 @@ function Deal() {
                 justifyContent: "flex-end",
               }}
             >
-              {!edit ? (
-                <button onClick={handleSubmit}>Add Deal</button>
-              ) : (
-                <>
-                  <button onClick={handleSubmit}>Edit Deal</button>
-                  <button
-                    onClick={() => {
-                      setEdit(false);
-                      setCategory("");
-                      setTags([]);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </>
-              )}
+              
             </div>
           </div>
         

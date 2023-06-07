@@ -21,13 +21,13 @@ function Deals() {
       setDeals(response.data);
       setLoading(false);
     };
-   if(!loading){
-    setLoading(true);
-    callApi();
-   }
+    if (!loading) {
+      setLoading(true);
+      callApi();
+    }
   }, []);
 
-    //===================================================================================================
+  //===================================================================================================
 
   const handleSearch = (search) => {
     return deals.filter(
@@ -40,35 +40,27 @@ function Deals() {
   //Search Display is the data that is displayed on the table when search is not empty
   const searchDisplay = handleSearch(search);
 
-
   //===================================================================================================
 
-    const handleTableClick = async(action, item) => {
-        try{
-
-            if(action==="view"){
-               navigate(`/Deal/${item._id}`);
-            }
-            else if(action === "edit"){
-                navigate(`/Deal/${item._id}`);
-            }
-            else if(action==="delete"){
-               const res = await deleteDeal(item._id);
-                if(res.status === "OK"){
-                    setDeals(deals.filter((deal) => deal._id !== item._id));
-                    toast.success("Deal Deleted Successfully");
-                }
-
-            }
-
-
-        }catch(err){
-            console.log(err);
+  const handleTableClick = async (action, item) => {
+    try {
+      if (action === "view") {
+        navigate(`/Deal/${item._id}`);
+      } else if (action === "edit") {
+        navigate(`/editDeal/${item._id}`);
+      } else if (action === "delete") {
+        const res = await deleteDeal(item._id);
+        if (res.status === "OK") {
+          setDeals(deals.filter((deal) => deal._id !== item._id));
+          toast.success("Deal Deleted Successfully");
         }
+      }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
-    //===================================================================================================
-
+  //===================================================================================================
 
   return (
     <Layout>
@@ -105,10 +97,19 @@ function Deals() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Deals"
           ></input>
-          <button className={style.button}>Create Deal</button>
+          <button
+            onClick={() => navigate("/createdeal")}
+            className={style.button}
+          >
+            Create Deal
+          </button>
         </div>
       </div>
-     <DealTable loading={loading} data={searchDisplay} handleClick={handleTableClick} />
+      <DealTable
+        loading={loading}
+        data={searchDisplay}
+        handleClick={handleTableClick}
+      />
     </Layout>
   );
 }

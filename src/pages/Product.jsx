@@ -7,27 +7,23 @@ import { getProductById } from "../api/services/product.service";
 import { useNavigate, useParams } from "react-router-dom";
 import parse from "html-react-parser";
 function Product() {
-
   const [product, setProduct] = useState({});
   const navigate = useNavigate();
   const { productId } = useParams();
 
   React.useEffect(() => {
-
     const callAPi = async () => {
-      try{
+      try {
+        console.log("HERE",productId);
         const response = await getProductById(productId);
-      console.log(response.data);
-      setProduct(response.data);
-      }catch(e){
+        console.log(response.data);
+        setProduct(response.data);
+      } catch (e) {
         console.log(e);
       }
-
-    }
+    };
     callAPi();
-
   }, []);
-
 
   return (
     <Layout>
@@ -46,7 +42,8 @@ function Product() {
           <article>
             <h5 style={{ color: "black" }}>Description</h5>
             <p>
-             {parse(product.description)}
+              {console.log(product.description)}
+              {parse(product.description)}
             </p>
           </article>
 

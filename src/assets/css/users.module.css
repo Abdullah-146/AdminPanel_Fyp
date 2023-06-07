@@ -12,6 +12,17 @@ input[type="search"] {
   background: #0f172a;
   color: white;
 }
+.input{
+  border: 1px solid #0f172a;
+  padding: 20px;
+  margin: 6rem auto 1rem auto;
+  display: block;
+  width: 50%;
+  border-radius: 8px;
+  outline: none;
+  background: #0f172a;
+  color: white;
+}
 table {
   border: 1px solid #334155;
   border-collapse: collapse;

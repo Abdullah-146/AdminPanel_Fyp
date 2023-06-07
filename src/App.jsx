@@ -22,6 +22,8 @@ import Discount from "./pages/Discount";
 import OrderDetails from "./pages/OrderDetails";
 import Deals from "./pages/Deals";
 import Deal from "./pages/Deal";
+import CreateDeal from "./pages/createDeal";
+import EditDeal from "./pages/EditDeal";
 
 export const socket = io("http://localhost:5000", {
   auth: {
@@ -42,7 +44,9 @@ function App() {
       <Route path="/CreateQr" element={<CreateQr />} />
       <Route path="/order" element={<ManualOrder />} />
       <Route path="/deals" element={<Deals />} />
-      <Route path="/deal/:id" element={<Deal />} />
+      <Route path="/createDeal" element={<CreateDeal />} />
+      <Route path="/editDeal/:dealId" element={<EditDeal />} />
+      <Route path="/deal/:dealId" element={<Deal />} />
       <Route path="/invoice" element={<Invoice />} />
       <Route path="/login" element={<Login />} />
       <Route path="/update-product" element={<UpdateProduct />} />
