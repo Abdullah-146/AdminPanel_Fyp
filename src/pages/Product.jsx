@@ -15,7 +15,6 @@ function Product() {
     const callAPi = async () => {
       try {
         const response = await getProductById(id);
-        console.log("THIS: ",response.data);
         setProduct(response.data);
       } catch (e) {
         console.log(e);
@@ -48,7 +47,7 @@ function Product() {
           <div className={style.footer}>
             <button type="button">
               <i className="fa fa-2xl fa-credit-card" />
-              <Link to={"/update-product"}>Update</Link>
+              <Link to={`/editProduct/${product._id}`}>Update</Link>
             </button>
             <button type="button">
               <i className="fa fa-2xl fa-credit-card" />

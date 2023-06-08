@@ -143,6 +143,7 @@ function Products() {
 
   const handleClick = async (action, id) => {
     if (action === "edit") {
+      navigate(`/editProduct/${id}`);
     } else if (action === "delete") {
       try {
         const response = await deleteProduct(id);

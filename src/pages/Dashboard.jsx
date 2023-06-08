@@ -44,7 +44,8 @@ function Dashboard() {
     socket.on("order", (add) => {
       toast.success("An order has been placed");
       sound.play();
-      console.log(add);
+      // setOrders([add, ...orders]);
+      // setData([add, ...data]);
       
     });
   }, [socket]);
@@ -141,12 +142,13 @@ function Dashboard() {
   };
 
   const handleSearch = (search) => {
+    console.log("FILTER: ",orders);
     return orders.filter(
       (order) =>
         order?.userId?.name.toLowerCase().includes(search.toLowerCase()) ||
         order?.status === search ||
         order?.total.toString().includes(search.toLowerCase()) ||
-        order._id.toLowerCase().includes(search.toLowerCase())
+        order?._id.toLowerCase().includes(search.toLowerCase())
     );
   };
 
