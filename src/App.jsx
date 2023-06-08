@@ -26,7 +26,7 @@ import CreateDeal from "./pages/CreateDeal";
 import EditDeal from "./pages/EditDeal";
 import EditProduct from "./pages/editProduct";
 
-export const socket = io("http://localhost:5000", {
+export const socket = io("https://fypserver-production-2e83.up.railway.app", {
   auth: {
     token: localStorage.getItem("accessToken"),
   },
