@@ -3,7 +3,7 @@ import "../assets/css/login.css";
 import { Outlet, Link } from "react-router-dom";
 import { login } from "../api/services/auth.service";
 
-function Login() {
+function Login({setlogin}) {
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -17,7 +17,8 @@ function Login() {
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("user", response.user);
-        window.location.href = "/";
+        // window.location.href = "/";
+        setlogin(true)
       }
     } catch (err) {
       console.log(err);

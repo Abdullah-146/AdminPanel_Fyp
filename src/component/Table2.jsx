@@ -40,7 +40,7 @@ function Table2(props) {
     <table style={{ overflowY: "scroll" }}>
       <thead style={{ paddingTop: 15, paddingBottom: 15,width:"600%",  cursor:"pointer", display:"flex", justifyContent:"flex-end",alignItems:"center"  }}>
       <p style={{ color: "red" }}>{props.loading && "Loading..."}</p>
-        <div
+        {/* <div
           style={{
             display: "flex",
             alignItems: "center",
@@ -50,7 +50,7 @@ function Table2(props) {
         >
           <FiFilter />
           <AiOutlineDown fontSize={15} />
-        </div>
+        </div> */}
       </thead>
       <tbody>
         <tr>
@@ -123,7 +123,7 @@ function Table2(props) {
             colSpan={0}
           >
             {props.hasPreviousPage && <p onClick={handlePrevious}>Previous</p>}
-            <p>1-1 of 7</p>
+            {"    "}
             {props.hasNextPage && <p onClick={handleNext}>Next</p>}
           </td>
         ) : props.loadMore && !props.loading ? (

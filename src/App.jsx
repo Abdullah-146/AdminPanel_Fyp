@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
@@ -33,13 +33,14 @@ export const socket = io("http://localhost:5000", {
 });
 
 function App() {
+  const [login , setlogin] = useState(false)
   useEffect(() => {
     socket.on("connect", () => {
       console.log("connected");
     });
   }, []);
 
-  return (
+  return login ? (
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/CreateQr" element={<CreateQr />} />
@@ -68,7 +69,9 @@ function App() {
       <Route path="/OrderDetails/:id" element={<OrderDetails />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
-  );
+  ) :(
+    <Login setlogin={setlogin}/>
+  )
 }
 
 export default App;

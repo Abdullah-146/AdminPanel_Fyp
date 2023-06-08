@@ -17,7 +17,7 @@ function DealProductTable(props) {
   return (
     <table style={{ overflowY: "scroll" }}>
       <thead style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
-        <td colSpan={0}>
+        {/* <td colSpan={0}>
           <div
             style={{
               display: "flex",
@@ -30,7 +30,7 @@ function DealProductTable(props) {
             <FiFilter />
             <AiOutlineDown fontSize={15} />
           </div>
-        </td>
+        </td> */}
       </thead>
       <tbody>
         <tr>
@@ -59,7 +59,7 @@ function DealProductTable(props) {
           />
         ))}
       </tbody>
-      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
+      {/* <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
         <td
           style={{
             display: "flex",
@@ -72,7 +72,7 @@ function DealProductTable(props) {
           <p>1-1 of 7</p>
           <p>Next</p>
         </td>
-      </tfoot>
+      </tfoot> */}
     </table>
   );
 }

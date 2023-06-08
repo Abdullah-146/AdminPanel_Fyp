@@ -17,7 +17,7 @@ function DealTable(props) {
       <thead style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
         <td colSpan={0}>
           <p style={{ color: "red" }}>{props.loading && "Loading..."}</p>
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -27,7 +27,7 @@ function DealTable(props) {
           >
             <FiFilter />
             <AiOutlineDown fontSize={15} />
-          </div>
+          </div> */}
         </td>
       </thead>
       <tbody>

@@ -29,7 +29,7 @@ function Table(props) {
       <thead style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
         <td colSpan={0}>
           <p style={{ color: "red" }}>{props.loading && "Loading..."}</p>
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -39,7 +39,7 @@ function Table(props) {
           >
             <FiFilter />
             <AiOutlineDown fontSize={15} />
-          </div>
+          </div> */}
         </td>
       </thead>
       <tbody>
@@ -90,7 +90,7 @@ function Table(props) {
           </tr>
         ))}
       </tbody>
-      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer" }}>
+      <tfoot style={{ paddingTop: 15, paddingBottom: 15, cursor: "pointer", width:"600%" }}>
         {!props.search ? (
           <td
             style={{
@@ -101,7 +101,7 @@ function Table(props) {
             }}
           >
             {props.hasPreviousPage && <p onClick={handlePrevious}>Previous</p>}
-            <p>1-1 of 7</p>
+            {"    "}
             {props.hasNextPage && <p onClick={handleNext}>Next</p>}
           </td>
         ) : props.loadMore && !props.loading ? (

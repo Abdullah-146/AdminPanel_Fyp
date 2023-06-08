@@ -58,14 +58,14 @@ function SideBar() {
               </Link>
             </li> */}
 
-            <li>
+            {/* <li>
               <Link to="/invoice">
                 <span className="icon">
                   <i className="fa fa-print" />
                 </span>
                 <span className="text">Invoice</span>
               </Link>
-            </li>
+            </li> */}
 
             <li>
               <Link to="/Products">
