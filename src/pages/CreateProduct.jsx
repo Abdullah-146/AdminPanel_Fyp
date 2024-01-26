@@ -12,6 +12,7 @@ import { uploadImage } from "../api/services/upload.service.js";
 import { createProduct } from "../api/services/product.service.js";
 import { toast } from "react-toastify";
 import { getCategories } from "../api/services/category.service.js";
+import { useNavigate } from "react-router-dom";
 
 const editorContainerStyle = {
   width: "100%",
@@ -43,6 +44,7 @@ const contentContainerStyle = {
 function CreateProduct() {
   const [image, setImage] = useState(null);
   const [categories, setCatgories] = useState([]);
+  const navigate = useNavigatevigate();
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -262,7 +264,7 @@ function CreateProduct() {
                 />
               </div> */}
               <div className={style.btns}>
-                <button>Cancel</button>
+                <button onClick={()=>navgate("/Products")}>Cancel</button>
                 <button onClick={handleSave}>Save</button>
               </div>
             </div>

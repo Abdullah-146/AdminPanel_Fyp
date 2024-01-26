@@ -63,9 +63,16 @@ export const getOrderById = async (orderId) => {
   }
 };
 
-//TODO: update order status API to be written on Backend
-export const updateOrderStatus = async ({ orderId, ...data }) => {
+export const updateOrderStatus = async ({ orderId, status }) => {
   try {
+    let config = {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    }
+    const res = await axios.put("/admin/orders/order/status", { orderId, status}, config);
+    return res.data;
+    
   } catch (err) {
     let error = errorHandler(err);
     return error;

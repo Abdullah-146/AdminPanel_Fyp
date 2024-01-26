@@ -101,7 +101,6 @@ function Table(props) {
             }}
           >
             {props.hasPreviousPage && <p onClick={handlePrevious}>Previous</p>}
-            {"    "}
             {props.hasNextPage && <p onClick={handleNext}>Next</p>}
           </td>
         ) : props.loadMore && !props.loading ? (

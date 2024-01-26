@@ -3,10 +3,12 @@ import Layout from "../Layout/Layout.jsx";
 import style from "../assets/css/users.module.css";
 import { getTables } from "../api/services/table.service.js";
 import Table4 from "../component/Table4.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Tables() {
   const [search, setSearch] = useState("");
   const [tables, setTables] = useState([]);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const callApi = async () => {
@@ -65,7 +67,7 @@ function Tables() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Tables"
           ></input>
-          <button className={style.button}>Create Table</button>
+          <button onClick={()=>navigate("/CreateQr")} className={style.button}>Create Table</button>
         </div>
       </div>
       <Table4 data={tables} view={viewTable} edit={editTable} delete={deleteTable} />

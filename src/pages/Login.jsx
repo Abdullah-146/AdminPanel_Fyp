@@ -18,7 +18,7 @@ function Login({setlogin}) {
         localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("user", response.user);
         // window.location.href = "/";
-        setlogin(true)
+        setlogin(response.accessToken)
       }
     } catch (err) {
       console.log(err);

@@ -33,14 +33,14 @@ export const socket = io("https://fypserver-production-2e83.up.railway.app", {
 });
 
 function App() {
-  const [login , setlogin] = useState(false)
+  const [login , setlogin] = useState(localStorage.getItem("accessToken"))
   useEffect(() => {
     socket.on("connect", () => {
       console.log("connected");
     });
   }, []);
 
-  return login ? (
+  return (login !== "" && login !==null && login !==undefined)  ? (
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/CreateQr" element={<CreateQr />} />

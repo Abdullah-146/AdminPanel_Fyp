@@ -105,8 +105,13 @@ function Table2(props) {
                 }}
               >
                 <AiOutlineEye onClick={()=>handleClick('view',item._id)} />
-                <FiEdit onClick={()=>handleClick('edit',item._id)} />
-                <RiDeleteBin6Line onClick={()=>handleClick('delete',item._id)}  />
+                <select style={{background:"transparent",padding:"0.4rem"}} onChange={(e)=>props.handleStatus(item._id,e.target.value)} >
+                  <option>Select</option>
+                  <option style={{color:"black",fontWeight:"bold"}}  value={"delivered"}>delivered</option>
+                  <option style={{color:"black",fontWeight:"bold"}} value={"cancelled"}>cancelled</option>
+                </select>
+                {/* <FiEdit onClick={()=>handleClick('edit',item._id)} />
+                <RiDeleteBin6Line onClick={()=>handleClick('delete',item._id)}  /> */}
               </div>
             </td>
           </tr>

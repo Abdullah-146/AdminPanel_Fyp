@@ -8,7 +8,7 @@ import { Data } from "../utils/Chartdata";
 import { BarChart } from "../component/BarChart";
 import LineChart from "../component/LineChart";
 import { saleData } from "../utils/Saledata";
-import { getOrders } from "../api/services/order.service";
+import { getOrders, updateOrderStatus } from "../api/services/order.service";
 import Table2 from "../component/Table2";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -40,12 +40,13 @@ function Dashboard() {
       console.log(err.data); // { content: "Please retry later" }
     });
 
-    //TODO: add the order to the table
     socket.on("order", (add) => {
       toast.success("An order has been placed");
       sound.play();
-      // setOrders([add, ...orders]);
-      // setData([add, ...data]);
+      setData([add.order, ...data]);
+      setOrders([add.order, ...orders]);
+      
+
       
     });
   }, [socket]);
@@ -55,7 +56,6 @@ function Dashboard() {
   React.useEffect(() => {
     const callApi = async () => {
       const response = await getOrders({ limit: 20 });
-      console.log(response);
       setOrders(response.data);
       setData(response.data.slice(0, 10));
       setHasNextPage(response.hasNextPage);
@@ -142,7 +142,6 @@ function Dashboard() {
   };
 
   const handleSearch = (search) => {
-    console.log("FILTER: ",orders);
     return orders.filter(
       (order) =>
         order?.userId?.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -174,6 +173,30 @@ function Dashboard() {
   }, [searchDisplay]);
 
   //===================================================================================================
+
+
+  const handleStatus = async(id, status) => {
+    try{
+      console.log(id, status)
+      const response = await updateOrderStatus({orderId:id, status})
+      if(response.status === "OK"){
+        const index = orders.findIndex((order) => order._id === id);
+        const temp = [...orders];
+        temp[index].status = status;
+        setOrders(temp);
+
+        const index2 = data.findIndex((order) => order._id === id);
+        const temp2 = [...data];
+        temp2[index2].status = status;
+        setData(temp2);
+
+        toast.success("Order Status Updated")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
 
   const handleCreateOrder = () => {
     navigate("/order");
@@ -230,6 +253,7 @@ function Dashboard() {
         handlePrevious={handlePrevious}
         loadMore={resNext}
         handleLoadMore={handleLoadMore}
+        handleStatus = {handleStatus}
       />
     </Layout>
   );

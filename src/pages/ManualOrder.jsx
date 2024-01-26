@@ -126,7 +126,6 @@ function ManualOrder() {
           discount: 0,
         });
         selectedProducts = [];
-        //TODO: make sure that the selected items also becomes unselected
       }
       
       else{
@@ -176,7 +175,6 @@ function ManualOrder() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Products"
           ></input>
-          <button className={style.button}>Add Item</button>
         </div>
       </div>
       <ManualOrderTable
