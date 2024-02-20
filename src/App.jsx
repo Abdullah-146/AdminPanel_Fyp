@@ -26,21 +26,21 @@ import CreateDeal from "./pages/CreateDeal";
 import EditDeal from "./pages/EditDeal";
 import EditProduct from "./pages/editProduct";
 
-export const socket = io("https://fypserver-production-2e83.up.railway.app", {
+export const socket = io("https://fypserver-production.up.railway.app", {
   auth: {
     token: localStorage.getItem("accessToken"),
   },
 });
 
 function App() {
-  const [login , setlogin] = useState(localStorage.getItem("accessToken"))
+  const [login, setlogin] = useState(localStorage.getItem("accessToken"));
   useEffect(() => {
     socket.on("connect", () => {
       console.log("connected");
     });
   }, []);
 
-  return (login !== "" && login !==null && login !==undefined)  ? (
+  return login !== "" && login !== null && login !== undefined ? (
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/CreateQr" element={<CreateQr />} />
@@ -69,9 +69,9 @@ function App() {
       <Route path="/OrderDetails/:id" element={<OrderDetails />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
-  ) :(
-    <Login setlogin={setlogin}/>
-  )
+  ) : (
+    <Login setlogin={setlogin} />
+  );
 }
 
 export default App;

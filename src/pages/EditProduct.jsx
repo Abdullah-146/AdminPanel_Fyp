@@ -9,7 +9,11 @@ import draftToMarkdown from "draftjs-to-markdown";
 import htmlToDraft from "html-to-draftjs";
 import parse from "html-react-parser";
 import { uploadImage } from "../api/services/upload.service.js";
-import { createProduct, getProductById, updateProduct } from "../api/services/product.service.js";
+import {
+  createProduct,
+  getProductById,
+  updateProduct,
+} from "../api/services/product.service.js";
 import { toast } from "react-toastify";
 import { getCategories } from "../api/services/category.service.js";
 import { useNavigate, useParams } from "react-router-dom";
@@ -44,9 +48,9 @@ const contentContainerStyle = {
 function EditProduct() {
   const [image, setImage] = useState(null);
   const [categories, setCatgories] = useState([]);
-  const {id} = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [exsistingImage, setExsistingImage] = useState(null)
+  const [exsistingImage, setExsistingImage] = useState(null);
   const [data, setData] = useState({
     productId: "",
     title: "",
@@ -81,7 +85,6 @@ function EditProduct() {
     setData({ ...data, description: html });
   };
 
-  
   //===================================================================================================
   //getting the product id from url
   useEffect(() => {
@@ -89,24 +92,22 @@ function EditProduct() {
       try {
         const response = await getProductById(id);
         setData({
-            productId: response.data._id,
-            title: response.data.title,
-            description: response.data.description,
-            price: response.data.price,
-            category: response.data.category,
-            image: response.data.image,
+          productId: response.data._id,
+          title: response.data.title,
+          description: response.data.description,
+          price: response.data.price,
+          category: response.data.category,
+          image: response.data.image,
         });
-        setExsistingImage(response.data.image)
+        setExsistingImage(response.data.image);
         const blocksFromHtml = htmlToDraft(response.data.description);
         const { contentBlocks, entityMap } = blocksFromHtml;
         const contentState = ContentState.createFromBlockArray(
-            contentBlocks,
-            entityMap
+          contentBlocks,
+          entityMap
         );
         const editorState = EditorState.createWithContent(contentState);
         setEditorState(editorState);
-
-        
       } catch (err) {
         console.log(err);
       }
@@ -114,9 +115,8 @@ function EditProduct() {
 
     apiCall();
   }, []);
-  
 
-//===================================================================================================
+  //===================================================================================================
   //===================================================================================================
   //getting categories
   useEffect(() => {
@@ -131,32 +131,30 @@ function EditProduct() {
 
     apiCall();
   }, []);
-  
 
-//===================================================================================================
+  //===================================================================================================
 
   const handleSave = async (e) => {
     try {
       e.preventDefault();
-        
-      let imageInfo = {}
+
+      let imageInfo = {};
       let imageData = null;
 
-      if(image){
+      if (image) {
         const formData = new FormData();
         formData.append("file", image);
         imageData = await uploadImage(formData);
       }
-      if(imageData){
+      if (imageData) {
         imageInfo = {
-            image: imageData.data.url
-        }
-
+          image: imageData.data.url,
+        };
       }
       setData({ ...data, ...imageInfo });
       const response = await updateProduct({
         ...data,
-        ...imageInfo
+        ...imageInfo,
       });
       if (response.status === "OK") {
         toast.success("Product Edited Successfully");
@@ -164,7 +162,7 @@ function EditProduct() {
           title: "",
           description: "",
           price: 0,
-          category:[],
+          category: [],
           image: "",
         });
         setEditorState(EditorState.createEmpty());
@@ -212,12 +210,14 @@ function EditProduct() {
               <input
                 type="file"
                 placeholder="Enter Image"
-                onChange={(e) =>{ setImage(e.target.files[0]); setExsistingImage(URL.createObjectURL(e.target.files[0])) }}
+                onChange={(e) => {
+                  setImage(e.target.files[0]);
+                  setExsistingImage(URL.createObjectURL(e.target.files[0]));
+                }}
               />
-              {
-                exsistingImage && <img src={exsistingImage} alt="" width={100} height={100}/>
-              }
-
+              {exsistingImage && (
+                <img src={exsistingImage} alt="" width={100} height={100} />
+              )}
             </div>
             <div className={style.box_item}>
               <label>Tags:</label>
@@ -243,14 +243,14 @@ function EditProduct() {
                 onChange={handleCategorySelection}
                 className={style.input_field}
               >
-                {
-                  categories.map((item, index) => 
-                  <option value={item.title}><div>
-                    <img src={item.image} alt="" width={20} height={20}/>
-                    <p>{item.title}</p>
-                    </div></option>
-                  )
-                }
+                {categories.map((item, index) => (
+                  <option value={item.title}>
+                    <div>
+                      <img src={item.image} alt="" width={20} height={20} />
+                      <p>{item.title}</p>
+                    </div>
+                  </option>
+                ))}
                 {/* <option value="Lunch">Lunch</option>
                 <option value="Dinner">Dinner</option> */}
               </select>
@@ -319,7 +319,7 @@ function EditProduct() {
                 />
               </div> */}
               <div className={style.btns}>
-                <button onClick={()=>navigate("/products")}>Cancel</button>
+                <button onClick={() => navigate("/products")}>Cancel</button>
                 <button onClick={handleSave}>Edit</button>
               </div>
             </div>

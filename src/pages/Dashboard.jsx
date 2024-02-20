@@ -43,12 +43,15 @@ function Dashboard() {
     socket.on("order", (add) => {
       toast.success("An order has been placed");
       sound.play();
-      setData([add.order, ...data]);
-      setOrders([add.order, ...orders]);
-      
-
-      
+      // setData((prevData) => [add.order, ...prevData]);
+      setOrders((prevOrders) => [add.order, ...prevOrders]);
     });
+
+    return () => {
+      socket.off("order");
+      socket.off("connect_error");
+      socket.off("disconnect");
+    };
   }, [socket]);
 
   //===================================================================================================
@@ -67,6 +70,10 @@ function Dashboard() {
       callApi();
     }
   }, []);
+
+  React.useEffect(() => {
+    setData(orders.slice(0, 10));
+  }, [orders]);
 
   //===================================================================================================
   // Handling All Functionalities of Pagination for unFiltered Data
@@ -174,12 +181,11 @@ function Dashboard() {
 
   //===================================================================================================
 
-
-  const handleStatus = async(id, status) => {
-    try{
-      console.log(id, status)
-      const response = await updateOrderStatus({orderId:id, status})
-      if(response.status === "OK"){
+  const handleStatus = async (id, status) => {
+    try {
+      console.log(id, status);
+      const response = await updateOrderStatus({ orderId: id, status });
+      if (response.status === "OK") {
         const index = orders.findIndex((order) => order._id === id);
         const temp = [...orders];
         temp[index].status = status;
@@ -190,13 +196,12 @@ function Dashboard() {
         temp2[index2].status = status;
         setData(temp2);
 
-        toast.success("Order Status Updated")
+        toast.success("Order Status Updated");
       }
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
-
+  };
 
   const handleCreateOrder = () => {
     navigate("/order");
@@ -253,7 +258,7 @@ function Dashboard() {
         handlePrevious={handlePrevious}
         loadMore={resNext}
         handleLoadMore={handleLoadMore}
-        handleStatus = {handleStatus}
+        handleStatus={handleStatus}
       />
     </Layout>
   );
