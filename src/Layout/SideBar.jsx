@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import "./sidebar.css";
 import logo from "../assets/Vector.png";
 import { MdDiscount } from "react-icons/md";
-import {FcSalesPerformance} from "react-icons/fc";
+import { FcSalesPerformance } from "react-icons/fc";
 
 function SideBar() {
   const [resp, setResp] = useState("wrapper");
@@ -134,7 +134,13 @@ function SideBar() {
               </Link>
             </li>
             <li>
-              <Link to="/login">
+              <Link
+                to="/login"
+                onClick={() => {
+                  localStorage.removeItem("accessToken");
+                  location.reload();
+                }}
+              >
                 <span className="icon">
                   <i className="fa fa-lock" />
                 </span>

@@ -38,6 +38,7 @@ function App() {
     socket.on("connect", () => {
       console.log("connected");
     });
+    setlogin(localStorage.getItem("accessToken"));
   }, []);
 
   return login !== "" && login !== null && login !== undefined ? (
@@ -50,14 +51,12 @@ function App() {
       <Route path="/editDeal/:dealId" element={<EditDeal />} />
       <Route path="/deal/:dealId" element={<Deal />} />
       <Route path="/invoice" element={<Invoice />} />
-      <Route path="/login" element={<Login />} />
       <Route path="/update-product" element={<UpdateProduct />} />
       <Route path="/product/:id" element={<Product />} />
       <Route path="/editProduct/:id" element={<EditProduct />} />
       <Route path="/loan" element={<Loan />} />
       <Route path="/loanRequest" element={<LoanRequest />} />
       <Route path="/crud" element={<CRUD />} />
-      <Route path="/login" element={<Login />} />
       <Route path="/changePass" element={<ChangePass />} />
       <Route path="/users" element={<Users />} />
       <Route path="/Products" element={<Products />} />

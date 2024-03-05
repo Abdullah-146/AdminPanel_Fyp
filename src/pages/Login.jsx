@@ -3,22 +3,30 @@ import "../assets/css/login.css";
 import { Outlet, Link } from "react-router-dom";
 import { login } from "../api/services/auth.service";
 
-function Login({setlogin}) {
+function Login(props) {
   const [data, setData] = useState({
     email: "",
     password: "",
   });
+  const setlogin = props?.setlogin;
 
   const handleLogin = async (e) => {
     try {
       e.preventDefault();
+      console.log("====================================");
+      console.log(data);
+      console.log("====================================");
       const response = await login({ ...data });
       if (response.status === "OK") {
         localStorage.setItem("accessToken", response.accessToken);
         localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("user", response.user);
         // window.location.href = "/";
-        setlogin(response.accessToken)
+        console.log("====================================");
+        console.log(response.accessToken);
+        console.log("====================================");
+
+        setlogin(response?.accessToken);
       }
     } catch (err) {
       console.log(err);
